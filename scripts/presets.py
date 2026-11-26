@@ -17,6 +17,8 @@ from zipfile import ZIP_DEFLATED, ZipFile
 ROOT = Path(__file__).resolve().parents[1]
 PRESETS = ROOT / "presets"
 LOCK_FILE = PRESETS / "upstream.lock.json"
+TEAM_SLOT = "                  allowedAgentPresets: [ ptc-workflow-review ]"
+REVIEW_PRESET = "ptc-workflow-review"
 REPOSITORY = "asgeirtj/system_prompts_leaks"
 UPSTREAM = f"https://github.com/{REPOSITORY}"
 SHA = re.compile(r"[a-f0-9]{40}")
@@ -61,6 +63,9 @@ def spec():
     }
     if declared != by_id:
         raise ValueError("Preset labels/IDs are out of sync with the DSH declarations")
+    if template.splitlines().count(TEAM_SLOT) != 1:
+        raise ValueError("Expected one shared Workflow subagent allowlist")
+    teams_for(catalog)
 
     targets = set()
     for prompt in lock["prompts"]:
@@ -76,6 +81,32 @@ def spec():
             raise ValueError(f"Invalid separator for {target}")
         targets.add(target)
     return lock, catalog
+
+
+def teams_for(catalog):
+    teams = read_json(PRESETS / "teams.json")
+    ids = {row["id"] for row in catalog}
+    if REVIEW_PRESET not in ids:
+        raise ValueError("The read-only review preset must remain in the catalog")
+    for name, plan in teams.items():
+        children = plan["subagents"]
+        member_ids = {plan["lead"], *children}
+        if (name == "all" or not re.fullmatch(r"[a-z][a-z0-9-]*", name)
+                or not children or len(member_ids) != len(children) + 1
+                or REVIEW_PRESET in member_ids
+                or not all(p.startswith("ptc-workflow-") for p in member_ids)
+                or not member_ids <= ids):
+            raise ValueError(f"Invalid Workflow team: {name}")
+    return teams
+
+
+def team_template(raw, teams, selected):
+    names = list(teams) if "all" in selected else list(dict.fromkeys(selected))
+    if not names:
+        return raw, []
+    allowed = dict.fromkeys([REVIEW_PRESET, *(p for name in names for p in teams[name]["subagents"])])
+    line = "                  allowedAgentPresets: [ " + ", ".join(allowed) + " ]"
+    return raw.replace(TEAM_SLOT.encode(), line.encode(), 1), names
 
 
 def git(repo, *args):
@@ -105,7 +136,7 @@ def source_content(repo, revision, path):
     return content
 
 
-def build(output, repo):
+def build(output, repo, selected_teams=()):
     lock, catalog = spec()
     files = {
         p.relative_to(PRESETS).as_posix(): p.read_bytes()
@@ -114,6 +145,9 @@ def build(output, repo):
     }
     for name in ("Install-DSH-PTC.ps1", "ptc.patch.yml.in"):
         files[name] = (PRESETS / name).read_bytes()
+    files["ptc.patch.yml.in"], enabled_teams = team_template(
+        files["ptc.patch.yml.in"], teams_for(catalog), selected_teams
+    )
     cached_sources = {}
     for item in lock["prompts"]:
         key = (item["revision"], item["path"])
@@ -125,6 +159,7 @@ def build(output, repo):
         "dshVersion": "0.2.2-rc.5",
         "sourceRevision": lock["reviewed_commit"],
         "presets": catalog,
+        "teams": enabled_teams,
         "files": [{"path": name, "sha256": sha256(data)} for name, data in sorted(files.items())],
     })
     output.parent.mkdir(parents=True, exist_ok=True)
@@ -239,13 +274,16 @@ def main():
     build_args = action.add_parser("build", help="Build the portable preset archive")
     build_args.add_argument("--output", type=Path, default=ROOT / "dist/DSH-PTC-portable.zip")
     build_args.add_argument("--source-repo", type=Path, help="Existing upstream clone")
+    build_args.add_argument("--team", action="append", default=[],
+                            choices=[*read_json(PRESETS / "teams.json"), "all"],
+                            help="Allow subagent presets for one team (repeatable)")
     monitor_args = action.add_parser("upstream", help="Compare the archive with the reviewed revision")
     monitor_args.add_argument("--output", type=Path)
     monitor_args.add_argument("--source-repo", type=Path, help="Existing upstream clone instead of a fresh clone")
     monitor_args.add_argument("--head", help="Compare against a pinned revision instead of HEAD")
     opts = parser.parse_args()
     if opts.action == "build":
-        build(opts.output, opts.source_repo)
+        build(opts.output, opts.source_repo, opts.team)
     elif opts.action == "upstream":
         monitor(opts.source_repo, opts.output, opts.head)
     else:

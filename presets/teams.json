@@ -1,0 +1,14 @@
+{
+  "debug": {
+    "lead": "ptc-workflow-openai-astra-6-2",
+    "subagents": ["ptc-workflow-glm-5-3"]
+  },
+  "delivery": {
+    "lead": "ptc-workflow-fable-full",
+    "subagents": ["ptc-workflow-gemini-4-neon", "ptc-workflow-grok-4-7"]
+  },
+  "analysis": {
+    "lead": "ptc-workflow-kimi-k3-1-pro",
+    "subagents": ["ptc-workflow-qwen-3-8-max"]
+  }
+}

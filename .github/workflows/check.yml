@@ -32,3 +32,22 @@ jobs:
           $before = (Get-FileHash -LiteralPath $patch).Hash
           & ./dist/expanded/Install-DSH-PTC.ps1 -ProfileDir $profileFixture.FullName
           if ((Get-FileHash -LiteralPath $patch).Hash -ne $before) { throw 'Repeat install changed the profile' }
+      - name: Verify opt-in teams and rollback
+        shell: pwsh
+        run: |
+          python scripts/presets.py build --team all --output dist/teams.zip
+          if ($LASTEXITCODE -ne 0) { throw 'Team build failed' }
+          Expand-Archive dist/teams.zip -DestinationPath dist/teams
+          $profileFixture = (Resolve-Path -LiteralPath 'dist/test profile').Path
+          $patch = Join-Path $profileFixture 'cordis.patch.yml'
+          $before = (Get-FileHash -LiteralPath $patch).Hash
+          & ./dist/teams/Install-DSH-PTC.ps1 -ProfileDir $profileFixture
+          $allowlist = Get-Content -LiteralPath $patch | Select-String '^\s+allowedAgentPresets:'
+          foreach ($id in @('ptc-workflow-review','ptc-workflow-glm-5-3','ptc-workflow-gemini-4-neon','ptc-workflow-grok-4-7','ptc-workflow-qwen-3-8-max')) {
+            if ($allowlist.Line -notlike "*$id*") { throw "Missing allowlisted preset $id" }
+          }
+          $teamHash = (Get-FileHash -LiteralPath $patch).Hash
+          & ./dist/teams/Install-DSH-PTC.ps1 -ProfileDir $profileFixture
+          if ((Get-FileHash -LiteralPath $patch).Hash -ne $teamHash) { throw 'Repeat install changed the team profile' }
+          & ./dist/expanded/Install-DSH-PTC.ps1 -ProfileDir $profileFixture
+          if ((Get-FileHash -LiteralPath $patch).Hash -ne $before) { throw 'Default package did not restore the profile' }

@@ -52,14 +52,24 @@ $existingBlock = [regex]::Match($original, '(?ms)^# BEGIN PORTABLE DSH PTC\r?\n.
 $existingPtc = '(?m)^\s*-\s+id:\s*(?:preset-ptc-(?:astra|workflow(?:-[a-z0-9-]+)?)|ptc-model-delegation-budget)\s*(?:#.*)?$'
 
 if ($existingBlock.Success) {
-    if ($existingBlock.Value.Replace([string][char]13, '') -cne $block.Replace([string][char]13, '')) {
-        throw 'The existing portable PTC block differs. Review it before migrating.'
-    }
     $base = $original.Remove($existingBlock.Index, $existingBlock.Length)
     if ($base -match $existingPtc -or $base.Contains($start) -or $base.Contains($end)) {
         throw 'The profile also contains a separate PTC declaration.'
     }
     $next = $original
+    $oldBlock = $existingBlock.Value.Replace([string][char]13, '')
+    $newBlock = $block.Replace([string][char]13, '')
+    if ($oldBlock -cne $newBlock) {
+        $teamLine = '(?m)^ {18}allowedAgentPresets: \[ ptc-workflow-review(?:, ptc-workflow-[a-z0-9-]+)* \](?=\r?$)'
+        $oldTeam = [regex]::Matches($existingBlock.Value, $teamLine)
+        $newTeam = [regex]::Matches($block, $teamLine)
+        if ($oldTeam.Count -ne 1 -or $newTeam.Count -ne 1 -or
+            [regex]::Replace($oldBlock, $teamLine, '') -cne [regex]::Replace($newBlock, $teamLine, '')) {
+            throw 'The existing portable PTC block differs outside the subagent allowlist. Review it before migrating.'
+        }
+        $offset = $existingBlock.Index + $oldTeam[0].Index
+        $next = $original.Remove($offset, $oldTeam[0].Length).Insert($offset, $newTeam[0].Value)
+    }
 } else {
     if ($original -match $existingPtc -or $original.Contains($start) -or $original.Contains($end)) {
         throw 'PTC is already declared in the target profile. Review the existing block before merging.'

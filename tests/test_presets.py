@@ -39,6 +39,25 @@ class PresetTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "Line range"):
             presets.reconstruct(b"", item)
 
+    def test_workflow_teams_change_only_the_explicit_subagent_choices(self):
+        _, catalog = presets.spec()
+        teams = presets.teams_for(catalog)
+        template = (presets.PRESETS / "ptc.patch.yml.in").read_bytes()
+        self.assertEqual(presets.team_template(template, teams, []), (template, []))
+        debug, names = presets.team_template(template, teams, ["debug", "debug"])
+        self.assertEqual(names, ["debug"])
+        self.assertIn(b"allowedAgentPresets: [ ptc-workflow-review, ptc-workflow-glm-5-3 ]", debug)
+        combined, names = presets.team_template(template, teams, ["all"])
+        self.assertEqual(names, list(teams))
+        self.assertEqual(len(combined.splitlines()), len(template.splitlines()))
+        changed = [(old, new) for old, new in zip(template.splitlines(), combined.splitlines()) if old != new]
+        self.assertEqual(len(changed), 1)
+        line = changed[0][1].decode()
+        for team in teams.values():
+            for child in team["subagents"]:
+                self.assertIn(child, line)
+        self.assertIn("ptc-workflow-review", line)
+
     def test_upstream_detects_rename_and_new_candidate(self):
         with TemporaryDirectory() as temp:
             repo = Path(temp)
