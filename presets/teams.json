@@ -55,5 +55,13 @@
     "subagents": [
       "ptc-workflow-kimi-k3-1-pro"
     ]
+  },
+  "research": {
+    "lead": "ptc-workflow-fable-full",
+    "subagents": [
+      "ptc-workflow-gemini-4-neon",
+      "ptc-workflow-qwen-3-8-max",
+      "ptc-workflow-glm-5-3"
+    ]
   }
 }
