@@ -71,6 +71,8 @@ python scripts/presets.py build --team debug
 
 [Подробное руководство по маркетинговым исследованиям](docs/marketing-research.md)
 
+[Research Manager](addons/research-manager/README.md) — отдельный пресет потребительских исследований с методическим ревью на High. [Задание для ИИ, который установит пресет](addons/research-manager/INSTALL-FOR-AI.md)
+
 ## Обновления источника
 
 Отчёт сравнивает текущий архив с последним проверенным коммитом. В нём видны изменения используемых файлов, новые возможные источники, переименования и прочие правки. На GitHub отчёт доступен в **Actions → Upstream prompts → Summary**. Можно запустить его вручную. Запланированная проверка идёт ежедневно. [Отчёты GitHub Actions](https://github.com/Kotpes537/dsh-ptc-presets/actions/workflows/upstream.yml)

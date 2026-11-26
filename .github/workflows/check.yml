@@ -51,3 +51,22 @@ jobs:
           if ((Get-FileHash -LiteralPath $patch).Hash -ne $teamHash) { throw 'Repeat install changed the team profile' }
           & ./dist/expanded/Install-DSH-PTC.ps1 -ProfileDir $profileFixture
           if ((Get-FileHash -LiteralPath $patch).Hash -ne $before) { throw 'Default package did not restore the profile' }
+      - name: Install Research Manager with the current High rules
+        shell: pwsh
+        run: |
+          $profileFixture = (New-Item -ItemType Directory -Path 'dist/research profile').FullName
+          & ./dist/teams/Install-DSH-PTC.ps1 -ProfileDir $profileFixture
+          $patch = Join-Path $profileFixture 'cordis.patch.yml'
+          $before = (Get-FileHash -LiteralPath $patch).Hash
+          python -B -X utf8 addons/research-manager/install.py --profile-dir $profileFixture
+          if ($LASTEXITCODE -ne 0) { throw 'Research Manager preview failed' }
+          if ((Get-FileHash -LiteralPath $patch).Hash -ne $before) { throw 'Preview changed the profile' }
+          python -B -X utf8 addons/research-manager/install.py --profile-dir $profileFixture --apply
+          if ($LASTEXITCODE -ne 0) { throw 'Research Manager install failed' }
+          if (@(Select-String -LiteralPath $patch -Pattern '^    - id: preset-dsh-research-manager$').Count -ne 1) {
+            throw 'Expected one Research Manager declaration'
+          }
+          $installed = (Get-FileHash -LiteralPath $patch).Hash
+          python -B -X utf8 addons/research-manager/install.py --profile-dir $profileFixture --apply
+          if ($LASTEXITCODE -ne 0) { throw 'Repeat Research Manager install failed' }
+          if ((Get-FileHash -LiteralPath $patch).Hash -ne $installed) { throw 'Repeat install changed the profile' }
