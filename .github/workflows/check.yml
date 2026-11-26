@@ -1,0 +1,34 @@
+name: Preset checks
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  presets:
+    runs-on: windows-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - name: Check the catalog
+        run: python scripts/presets.py check
+      - name: Run tests
+        run: python -m unittest discover -s tests -v
+      - name: Reconstruct the portable package
+        run: python scripts/presets.py build
+      - name: Exercise the installer against a fresh profile
+        shell: pwsh
+        run: |
+          Expand-Archive dist/DSH-PTC-portable.zip -DestinationPath dist/expanded
+          $profileFixture = New-Item -ItemType Directory -Path 'dist/test profile'
+          & ./dist/expanded/Install-DSH-PTC.ps1 -ProfileDir $profileFixture.FullName
+          $patch = Join-Path $profileFixture.FullName 'cordis.patch.yml'
+          $before = (Get-FileHash -LiteralPath $patch).Hash
+          & ./dist/expanded/Install-DSH-PTC.ps1 -ProfileDir $profileFixture.FullName
+          if ((Get-FileHash -LiteralPath $patch).Hash -ne $before) { throw 'Repeat install changed the profile' }

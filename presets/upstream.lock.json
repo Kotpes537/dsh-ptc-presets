@@ -1,0 +1,382 @@
+{
+  "repository": "asgeirtj/system_prompts_leaks",
+  "branch": "main",
+  "reviewed_commit": "74761cc521a4ea73a603b54e7465e057de8ced19",
+  "prompts": [
+    {
+      "target": "local-plugins/ptc-workflow/full-prompts/claude-opus-5-5.md",
+      "revision": "0aa4be305d75f23db32977ee255dbd430c27e2e6",
+      "path": "Anthropic/claude-code/claude-code-opus-5.5.md",
+      "lines": [
+        [
+          15,
+          83
+        ],
+        [
+          89,
+          90
+        ],
+        [
+          92,
+          129
+        ],
+        [
+          230,
+          338
+        ]
+      ],
+      "separator": "",
+      "sha256": "e9520d422aa6a214fe828f19842a429dfbd1209c9038401bde5c93f116fb722f"
+    },
+    {
+      "target": "local-plugins/ptc-workflow/full-prompts/claude-sonnet-5-5.md",
+      "revision": "0aa4be305d75f23db32977ee255dbd430c27e2e6",
+      "path": "Anthropic/claude-code/claude-code-sonnet-5.5.md",
+      "lines": [
+        [
+          13,
+          81
+        ],
+        [
+          87,
+          88
+        ],
+        [
+          90,
+          125
+        ],
+        [
+          226,
+          330
+        ]
+      ],
+      "separator": "",
+      "sha256": "d76af8c0874049e01d1618707d0d161952e720ac84e7aeaf4382ab2f20b3f31c"
+    },
+    {
+      "target": "local-plugins/ptc-workflow/full-prompts/openai-astra-6-2.md",
+      "revision": "0aa4be305d75f23db32977ee255dbd430c27e2e6",
+      "path": "OpenAI/Codex/gpt-6.2-astra.md",
+      "lines": [
+        [
+          1,
+          201
+        ]
+      ],
+      "separator": "\n",
+      "sha256": "a2db4586952930882b3b0ecb9dff4c6d53958ecba1e10ec87dcd0b2aedb01d05"
+    },
+    {
+      "target": "local-plugins/ptc-workflow/full-prompts/openai-sol-6-2.md",
+      "revision": "0aa4be305d75f23db32977ee255dbd430c27e2e6",
+      "path": "OpenAI/Codex/gpt-6.2-sol.md",
+      "lines": [
+        [
+          1,
+          201
+        ]
+      ],
+      "separator": "\n",
+      "sha256": "229e735557dac55cec20bb1dbb4ea2b8f74aa7eaa9bad2d33e8606840ac33393"
+    },
+    {
+      "target": "local-plugins/ptc-workflow/full-prompts/glm-5-3.md",
+      "revision": "0aa4be305d75f23db32977ee255dbd430c27e2e6",
+      "path": "GLM/zcode-desktop.md",
+      "lines": [
+        [
+          3,
+          54
+        ],
+        [
+          67,
+          79
+        ],
+        [
+          1881,
+          1912
+        ]
+      ],
+      "separator": "",
+      "sha256": "3ec40744811dbef37e3ccb84e2b850d8a1723f621d59ce0eb24eaface22b3238"
+    },
+    {
+      "target": "local-plugins/ptc-workflow/full-prompts/kimi-k3.md",
+      "revision": "0aa4be305d75f23db32977ee255dbd430c27e2e6",
+      "path": "Kimi/kimi-3.md",
+      "lines": [
+        [
+          1,
+          135
+        ]
+      ],
+      "separator": "\n",
+      "sha256": "251b4dea3feafbfbc9ff536c6883f69005e94fd01cb46b8c04006c2cdad47794"
+    },
+    {
+      "target": "local-plugins/ptc-workflow/full-prompts/google-gemini-4-argon.md",
+      "revision": "0aa4be305d75f23db32977ee255dbd430c27e2e6",
+      "path": "Google/antigravity/gemini-4-argon-antigravity-cli.md",
+      "lines": [
+        [
+          9,
+          232
+        ],
+        [
+          247,
+          248
+        ]
+      ],
+      "separator": "",
+      "sha256": "f4f91652f4bf441ce779b3895faa4c76a242e7d66f4b3c323ddc5dc8e5214326"
+    },
+    {
+      "target": "local-plugins/ptc-workflow/full-prompts/qwen-4-0-max.md",
+      "revision": "0aa4be305d75f23db32977ee255dbd430c27e2e6",
+      "path": "Qwen/qwen4.0-max.md",
+      "lines": [
+        [
+          1,
+          2
+        ]
+      ],
+      "separator": "\n",
+      "sha256": "7c86380bdd302f92e975a17141ed80276743e377bec61c156332a5a2833efe38"
+    },
+    {
+      "target": "local-plugins/ptc-workflow/full-prompts/claude-haiku-5-5.md",
+      "revision": "74761cc521a4ea73a603b54e7465e057de8ced19",
+      "path": "Anthropic/claude-code/claude-code-haiku-5.5.md",
+      "lines": [
+        [
+          3,
+          5
+        ],
+        [
+          9,
+          18
+        ],
+        [
+          107,
+          127
+        ],
+        [
+          228,
+          239
+        ]
+      ],
+      "separator": "\n",
+      "sha256": "f0b454f35719e73f59fa1c7f7ec0b729f18e8fa39877acfcf91d1d69aa4b3d26"
+    },
+    {
+      "target": "local-plugins/ptc-workflow/full-prompts/claude-fable-5-1.md",
+      "revision": "74761cc521a4ea73a603b54e7465e057de8ced19",
+      "path": "Anthropic/claude-code/claude-code-fable-5.1.md",
+      "lines": [
+        [
+          15,
+          17
+        ],
+        [
+          21,
+          30
+        ],
+        [
+          123,
+          163
+        ],
+        [
+          264,
+          275
+        ]
+      ],
+      "separator": "\n",
+      "sha256": "7ebb69d791a10fcf3cc8b8d77771e44783f9ba0f7be336e3ff7261184a8f70c1"
+    },
+    {
+      "target": "local-plugins/ptc-workflow/full-prompts/claude-opus-5.md",
+      "revision": "74761cc521a4ea73a603b54e7465e057de8ced19",
+      "path": "Anthropic/claude-code/claude-code-opus-5.md",
+      "lines": [
+        [
+          15,
+          17
+        ],
+        [
+          21,
+          30
+        ],
+        [
+          119,
+          143
+        ],
+        [
+          244,
+          255
+        ]
+      ],
+      "separator": "\n",
+      "sha256": "eb8ee9d5e0b3d26f9a3aeb66577f2f7730fb35e08351d2f1c3df1dc4b2996182"
+    },
+    {
+      "target": "local-plugins/ptc-workflow/full-prompts/claude-opus-4-8.md",
+      "revision": "74761cc521a4ea73a603b54e7465e057de8ced19",
+      "path": "Anthropic/claude-code/claude-code-opus-4.8.md",
+      "lines": [
+        [
+          15,
+          17
+        ],
+        [
+          21,
+          30
+        ],
+        [
+          119,
+          129
+        ],
+        [
+          230,
+          241
+        ]
+      ],
+      "separator": "\n",
+      "sha256": "f5d12f457c6f03c2c53e6afb1f4d31f7f8e2c4019f4f90a494957042a75f55ac"
+    },
+    {
+      "target": "local-plugins/ptc-workflow/full-prompts/claude-sonnet-5.md",
+      "revision": "74761cc521a4ea73a603b54e7465e057de8ced19",
+      "path": "Anthropic/claude-code/claude-code-sonnet-5.md",
+      "lines": [
+        [
+          15,
+          17
+        ],
+        [
+          22,
+          70
+        ],
+        [
+          118,
+          134
+        ],
+        [
+          284,
+          294
+        ],
+        [
+          403,
+          414
+        ]
+      ],
+      "separator": "\n",
+      "sha256": "5ea40e0a00aa833765ed67c3ae51a6a8eb3cbb9a3730ab073db333cfe0231532"
+    },
+    {
+      "target": "local-plugins/ptc-workflow/full-prompts/grok-4-7.md",
+      "revision": "74761cc521a4ea73a603b54e7465e057de8ced19",
+      "path": "xAI/grok-4.7-cli.md",
+      "lines": [
+        [
+          37,
+          57
+        ],
+        [
+          83,
+          133
+        ],
+        [
+          141,
+          153
+        ]
+      ],
+      "separator": "\n",
+      "sha256": "96d29de89960683bae620b25920c15455558c59fb9f31bbd2fd20a7fe9bb5873"
+    },
+    {
+      "target": "local-plugins/ptc-workflow/full-prompts/muse-spark-1-3.md",
+      "revision": "74761cc521a4ea73a603b54e7465e057de8ced19",
+      "path": "Meta/muse-code/muse-spark-1.3-muse-code.md",
+      "lines": [
+        [
+          1546,
+          1662
+        ]
+      ],
+      "separator": "\n",
+      "sha256": "f60083043efa6711cb22edf91f2f32db6928b4e803dbc0ef432c1f188eddf7c0"
+    },
+    {
+      "target": "local-plugins/ptc-workflow/full-prompts/minimax-m3.md",
+      "revision": "74761cc521a4ea73a603b54e7465e057de8ced19",
+      "path": "MiniMax/minimax-m3-mavis.md",
+      "lines": [
+        [
+          1,
+          59
+        ],
+        [
+          63,
+          86
+        ]
+      ],
+      "separator": "\n",
+      "sha256": "588a6461a92e242e2c98f3279c710deeebfa27e13324693527651e324e36da36"
+    },
+    {
+      "target": "local-plugins/ptc-workflow/full-prompts/antigravity-cli.md",
+      "revision": "74761cc521a4ea73a603b54e7465e057de8ced19",
+      "path": "Google/antigravity/antigravity-cli.md",
+      "lines": [
+        [
+          94,
+          115
+        ],
+        [
+          140,
+          157
+        ],
+        [
+          178,
+          198
+        ]
+      ],
+      "separator": "\n",
+      "sha256": "9318fe8aed480bc9638f20203ec84ba4cb464df54f3bdc59d5a50102cacf0848"
+    },
+    {
+      "target": "local-plugins/ptc-workflow/fable-5.2-system.md",
+      "revision": "0aa4be305d75f23db32977ee255dbd430c27e2e6",
+      "path": "Anthropic/claude-code/claude-code-fable-5.2.md",
+      "lines": [
+        [
+          15,
+          87
+        ],
+        [
+          93,
+          153
+        ],
+        [
+          254,
+          358
+        ]
+      ],
+      "separator": "",
+      "sha256": "133b7acf3e6fdaee89312dc818dfbf4e08a3dcf08dbb744f7230d9e6fe44698a"
+    },
+    {
+      "target": "local-plugins/ptc-astra/astra-6.2.md",
+      "revision": "0aa4be305d75f23db32977ee255dbd430c27e2e6",
+      "path": "OpenAI/Codex/gpt-6.2-astra.md",
+      "lines": [
+        [
+          1,
+          201
+        ]
+      ],
+      "separator": "\n",
+      "sha256": "a2db4586952930882b3b0ecb9dff4c6d53958ecba1e10ec87dcd0b2aedb01d05"
+    }
+  ]
+}
