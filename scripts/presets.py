@@ -63,8 +63,8 @@ def spec():
     }
     if declared != by_id:
         raise ValueError("Preset labels/IDs are out of sync with the DSH declarations")
-    if template.splitlines().count(TEAM_SLOT) != 1:
-        raise ValueError("Expected one shared Workflow subagent allowlist")
+    if template.splitlines().count(TEAM_SLOT) != 2:
+        raise ValueError("Expected Astra and Workflow subagent allowlists")
     teams_for(catalog)
 
     targets = set()
@@ -106,7 +106,7 @@ def team_template(raw, teams, selected):
         return raw, []
     allowed = dict.fromkeys([REVIEW_PRESET, *(p for name in names for p in teams[name]["subagents"])])
     line = "                  allowedAgentPresets: [ " + ", ".join(allowed) + " ]"
-    return raw.replace(TEAM_SLOT.encode(), line.encode(), 1), names
+    return raw.replace(TEAM_SLOT.encode(), line.encode()), names
 
 
 def git(repo, *args):

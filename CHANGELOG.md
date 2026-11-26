@@ -1,5 +1,10 @@
 # Изменения
 
+## 0.1.2
+
+- Добавлены связки quick, migration, loyalty, strategy, experiments и executive.
+- Настройки смешанных пресетов применяются к Astra и Workflow. Одна модель может выполнять все роли.
+
 ## 0.1.1
 
 - Добавлены три опциональные связки для субагентов `debug`, `delivery` и `analysis`.

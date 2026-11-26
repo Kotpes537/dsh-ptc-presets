@@ -63,12 +63,12 @@ if ($existingBlock.Success) {
         $teamLine = '(?m)^ {18}allowedAgentPresets: \[ ptc-workflow-review(?:, ptc-workflow-[a-z0-9-]+)* \](?=\r?$)'
         $oldTeam = [regex]::Matches($existingBlock.Value, $teamLine)
         $newTeam = [regex]::Matches($block, $teamLine)
-        if ($oldTeam.Count -ne 1 -or $newTeam.Count -ne 1 -or
-            [regex]::Replace($oldBlock, $teamLine, '') -cne [regex]::Replace($newBlock, $teamLine, '')) {
+        $stripTeam = $teamLine + '\r?\n'
+        if ($oldTeam.Count -notin @(1, 2) -or $newTeam.Count -ne 2 -or
+            [regex]::Replace($oldBlock, $stripTeam, '') -cne [regex]::Replace($newBlock, $stripTeam, '')) {
             throw 'The existing portable PTC block differs outside the subagent allowlist. Review it before migrating.'
         }
-        $offset = $existingBlock.Index + $oldTeam[0].Index
-        $next = $original.Remove($offset, $oldTeam[0].Length).Insert($offset, $newTeam[0].Value)
+        $next = $original.Remove($existingBlock.Index, $existingBlock.Length).Insert($existingBlock.Index, $block)
     }
 } else {
     if ($original -match $existingPtc -or $original.Contains($start) -or $original.Contains($end)) {

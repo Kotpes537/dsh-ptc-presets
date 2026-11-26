@@ -51,7 +51,7 @@ class PresetTests(unittest.TestCase):
         self.assertEqual(names, list(teams))
         self.assertEqual(len(combined.splitlines()), len(template.splitlines()))
         changed = [(old, new) for old, new in zip(template.splitlines(), combined.splitlines()) if old != new]
-        self.assertEqual(len(changed), 1)
+        self.assertEqual(len(changed), 2)
         line = changed[0][1].decode()
         for team in teams.values():
             for child in team["subagents"]:

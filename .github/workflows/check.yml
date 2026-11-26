@@ -44,7 +44,7 @@ jobs:
           & ./dist/teams/Install-DSH-PTC.ps1 -ProfileDir $profileFixture
           $allowlist = Get-Content -LiteralPath $patch | Select-String '^\s+allowedAgentPresets:'
           foreach ($id in @('ptc-workflow-review','ptc-workflow-glm-5-3','ptc-workflow-gemini-4-neon','ptc-workflow-grok-4-7','ptc-workflow-qwen-3-8-max')) {
-            if ($allowlist.Line -notlike "*$id*") { throw "Missing allowlisted preset $id" }
+            if (@($allowlist | Where-Object { $_.Line -notlike "*$id*" }).Count) { throw "Missing allowlisted preset $id" }
           }
           $teamHash = (Get-FileHash -LiteralPath $patch).Hash
           & ./dist/teams/Install-DSH-PTC.ps1 -ProfileDir $profileFixture

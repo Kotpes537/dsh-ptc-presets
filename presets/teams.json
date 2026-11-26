@@ -1,14 +1,59 @@
 {
   "debug": {
     "lead": "ptc-workflow-openai-astra-6-2",
-    "subagents": ["ptc-workflow-glm-5-3"]
+    "subagents": [
+      "ptc-workflow-glm-5-3"
+    ]
   },
   "delivery": {
     "lead": "ptc-workflow-fable-full",
-    "subagents": ["ptc-workflow-gemini-4-neon", "ptc-workflow-grok-4-7"]
+    "subagents": [
+      "ptc-workflow-gemini-4-neon",
+      "ptc-workflow-grok-4-7"
+    ]
   },
   "analysis": {
     "lead": "ptc-workflow-kimi-k3-1-pro",
-    "subagents": ["ptc-workflow-qwen-3-8-max"]
+    "subagents": [
+      "ptc-workflow-qwen-3-8-max"
+    ]
+  },
+  "quick": {
+    "lead": "ptc-workflow-openai-sol-6-2",
+    "subagents": [
+      "ptc-workflow-claude-haiku-5-5"
+    ]
+  },
+  "migration": {
+    "lead": "ptc-workflow-muse-spark-1-3",
+    "subagents": [
+      "ptc-workflow-grok-4-7"
+    ]
+  },
+  "loyalty": {
+    "lead": "ptc-workflow-kimi-k3-1-pro",
+    "subagents": [
+      "ptc-workflow-qwen-3-8-max"
+    ]
+  },
+  "strategy": {
+    "lead": "ptc-workflow-fable-full",
+    "subagents": [
+      "ptc-workflow-gemini-4-neon",
+      "ptc-workflow-glm-5-3"
+    ]
+  },
+  "experiments": {
+    "lead": "ptc-workflow-openai-astra-6-2",
+    "subagents": [
+      "ptc-workflow-qwen-3-8-max",
+      "ptc-workflow-glm-5-3"
+    ]
+  },
+  "executive": {
+    "lead": "ptc-workflow-fable-full",
+    "subagents": [
+      "ptc-workflow-kimi-k3-1-pro"
+    ]
   }
 }
