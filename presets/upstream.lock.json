@@ -1,7 +1,7 @@
 {
   "repository": "asgeirtj/system_prompts_leaks",
   "branch": "main",
-  "reviewed_commit": "74761cc521a4ea73a603b54e7465e057de8ced19",
+  "reviewed_commit": "c607f91ed3e6a6874c294976895728ec54bf553e",
   "prompts": [
     {
       "target": "local-plugins/ptc-workflow/full-prompts/claude-opus-5-5.md",
