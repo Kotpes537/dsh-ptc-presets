@@ -3,7 +3,7 @@ name: Upstream prompts
 on:
   workflow_dispatch:
   schedule:
-    - cron: "27 5 * * *"
+    - cron: "0 7 * * 1"
 
 permissions:
   contents: read
