@@ -2,16 +2,16 @@
 
 Установи Research Manager в DeepSeek Harness Desktop на Windows. Выполни доступные шаги сам через терминал и инструменты рабочего стола. Итог работы — пресет **Research Manager** в меню новой сессии DSH с действующим правилом High.
 
-Источник — публичный [DSH PTC Presets](https://github.com/Kotpes537/dsh-ptc-presets), тег `research-manager-v0.1.5`. Достаточно доступа к GitHub и самой машине. Для установки не нужны материалы клиента и ключи других моделей.
+Источник — ветка `main` публичного репозитория [DSH PTC Presets](https://github.com/Kotpes537/dsh-ptc-presets). Достаточно доступа к GitHub и самой машине. Для установки не нужны материалы клиента и ключи других моделей.
 
 ## Скачай и подготовь
 
 1. Проверь DSH Desktop, Python 3.10+, Git и PowerShell 7. Сборка и загрузка проверены с DSH 0.2.2-rc.5. Если команда `python` не найдена, проверь `py -3` и уже установленный локальный Python. Если DSH установлен, но ещё не создал профиль, запусти приложение один раз.
 2. Найди фактический каталог профиля DSH Desktop. Обычно это `%USERPROFILE%\.dsh\profiles\desktop`. При заданном `DSH_HOME` проверь подкаталог `profiles\desktop` в нём. Перед изменениями дождись окончания активных задач и закрой приложение штатно.
-3. Склонируй комплект в новую папку. Если уже есть чистая копия нужного тега, используй её.
+3. Склонируй комплект в новую папку. Если уже есть чистая актуальная копия, используй её.
 
 ```powershell
-git clone --depth 1 --branch research-manager-v0.1.5 https://github.com/Kotpes537/dsh-ptc-presets.git dsh-research-manager-0.1.5
+git clone --depth 1 --branch main https://github.com/Kotpes537/dsh-ptc-presets.git dsh-research-manager-0.1.5
 Set-Location dsh-research-manager-0.1.5
 $dshRoot = if ($env:DSH_HOME) { $env:DSH_HOME } else { Join-Path $env:USERPROFILE '.dsh' }
 $profileDir = Join-Path $dshRoot 'profiles/desktop'
@@ -22,16 +22,16 @@ python -B -X utf8 .\addons\research-manager\install.py --profile-dir $profileDir
 
 ## Установи основу, если нужна
 
-Для чистого профиля собери пакет с `--team research`. Если уже настроены другие переносимые связки, включи их вместе с `research` через повторные `--team`, чтобы сохранить доступных помощников. Сборщик загрузит закреплённые материалы и проверит их контрольные суммы.
+Собери базу с `--only --team research`. Установка добавит Fable Full, помощников Research Manager и общие зависимости. Уже настроенные пресеты и допуски помощников сохранятся.
 
 ```powershell
-python -B -X utf8 .\scripts\presets.py build --team research
+python -B -X utf8 .\scripts\presets.py build --only --team research
 Expand-Archive -LiteralPath .\dist\DSH-PTC-portable.zip -DestinationPath .\dist\research-base
 .\dist\research-base\Install-DSH-PTC.ps1 -ProfileDir $profileDir -WhatIf
 .\dist\research-base\Install-DSH-PTC.ps1 -ProfileDir $profileDir
 ```
 
-Запускай запись после успешного предпросмотра. При отличающихся локальных файлах или декларациях сохрани конфигурацию пользователя и сообщи, какой конфликт препятствует установке. Старый модуль `high-max.mjs` определяется отдельно: сравни его с предыдущим официальным коммитом. Если файл совпадает побайтно и остальные настройки совместимы, сохрани копию модуля, обнови только его до версии тега и повтори предпросмотр. Если файл содержит локальные правки, сначала согласуй способ их переноса.
+Запускай запись после успешного предпросмотра. При отличающихся локальных файлах или декларациях сохрани конфигурацию пользователя и сообщи, какой конфликт препятствует установке. Старый модуль `high-max.mjs` сравни с предыдущим официальным коммитом. Если файл совпадает побайтно и остальные настройки совместимы, сохрани копию модуля, обнови только его до версии из текущего Git-коммита и повтори предпросмотр. Если файл содержит локальные правки, сначала согласуй способ их переноса.
 
 ## Установи дополнение и проверь
 

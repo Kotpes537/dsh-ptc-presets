@@ -47,9 +47,27 @@ $profileUri = ([Uri]($ProfileDir.TrimEnd([IO.Path]::DirectorySeparatorChar) + [I
 $template = Get-Content -LiteralPath (Join-Path $PSScriptRoot $templateName) -Raw -Encoding UTF8
 $payload = $template.Replace('__DSH_PROFILE_URI__', $profileUri).Replace('__DSH_PROFILE_PATH__', $profilePath)
 $newline = [Environment]::NewLine
-$block = $start + $newline + $payload.TrimEnd() + $newline + $end
 $existingBlock = [regex]::Match($original, '(?ms)^# BEGIN PORTABLE DSH PTC\r?\n.*?^# END PORTABLE DSH PTC[ \t]*(?=\r?$)')
 $existingPtc = '(?m)^\s*-\s+id:\s*(?:preset-ptc-(?:astra|workflow(?:-[a-z0-9-]+)?)|ptc-model-delegation-budget)\s*(?:#.*)?$'
+$declaration = '(?ms)^    - id: preset-(?<id>ptc-[a-z0-9-]+)\r?\n.*?(?=^    - id: |^\S|\z)'
+$teamLine = '(?m)^ {18}allowedAgentPresets: \[ (?<ids>ptc-workflow-review(?:, ptc-workflow-[a-z0-9-]+)*) \](?=\r?$)'
+
+function Select-PresetDeclarations([string]$Text, [string[]]$Ids) {
+    $filtered = [regex]::Replace($Text, $declaration, {
+        param($match)
+        if ($match.Groups['id'].Value -cin $Ids) { $match.Value }
+        else { '' }
+    })
+    [regex]::Replace($filtered, '(?m)^- insert:\r?\n(?!    - id: )', '')
+}
+
+function New-PortableBlock([string]$Text) {
+    $start + $newline + $Text.TrimEnd() + $newline + $end
+}
+
+$selected = $manifest.selectedPresets
+$block = New-PortableBlock $payload
+if ($selected) { $block = New-PortableBlock (Select-PresetDeclarations $payload $selected) }
 
 if ($existingBlock.Success) {
     $base = $original.Remove($existingBlock.Index, $existingBlock.Length)
@@ -58,16 +76,25 @@ if ($existingBlock.Success) {
     }
     $next = $original
     $oldBlock = $existingBlock.Value.Replace([string][char]13, '')
-    $newBlock = $block.Replace([string][char]13, '')
-    if ($oldBlock -cne $newBlock) {
-        $teamLine = '(?m)^ {18}allowedAgentPresets: \[ ptc-workflow-review(?:, ptc-workflow-[a-z0-9-]+)* \](?=\r?$)'
-        $oldTeam = [regex]::Matches($existingBlock.Value, $teamLine)
-        $newTeam = [regex]::Matches($block, $teamLine)
-        $stripTeam = $teamLine + '\r?\n'
-        if ($oldTeam.Count -notin @(1, 2) -or $newTeam.Count -ne 2 -or
-            [regex]::Replace($oldBlock, $stripTeam, '') -cne [regex]::Replace($newBlock, $stripTeam, '')) {
-            throw 'The existing portable PTC block differs outside the subagent allowlist. Review it before migrating.'
+    $oldIds = @([regex]::Matches($oldBlock, $declaration) | ForEach-Object { $_.Groups['id'].Value })
+    $canonicalOld = New-PortableBlock (Select-PresetDeclarations $payload $oldIds)
+    if (!$oldIds.Count -or [regex]::Replace($oldBlock, $teamLine, '') -cne
+        [regex]::Replace($canonicalOld.Replace([string][char]13, ''), $teamLine, '')) {
+        throw 'The existing portable PTC block differs from the published declarations. Review it before migrating.'
+    }
+    if ($selected -or $base -match '(?m)^# BEGIN DSH RESEARCH MANAGER\r?$') {
+        $allowed = @('ptc-workflow-review')
+        foreach ($text in @($oldBlock, $payload)) {
+            foreach ($line in [regex]::Matches($text, $teamLine)) {
+                $allowed += $line.Groups['ids'].Value -split ', '
+            }
         }
+        $allowed = @($allowed | Select-Object -Unique)
+        $merged = [regex]::Replace($payload, $teamLine, (' ' * 18 + 'allowedAgentPresets: [ ' + ($allowed -join ', ') + ' ]'))
+        if ($selected) { $merged = Select-PresetDeclarations $merged ($oldIds + $selected) }
+        $block = New-PortableBlock $merged
+    }
+    if ($oldBlock -cne $block.Replace([string][char]13, '')) {
         $next = $original.Remove($existingBlock.Index, $existingBlock.Length).Insert($existingBlock.Index, $block)
     }
 } else {

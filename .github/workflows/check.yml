@@ -70,3 +70,28 @@ jobs:
           python -B -X utf8 addons/research-manager/install.py --profile-dir $profileFixture --apply
           if ($LASTEXITCODE -ne 0) { throw 'Repeat Research Manager install failed' }
           if ((Get-FileHash -LiteralPath $patch).Hash -ne $installed) { throw 'Repeat install changed the profile' }
+      - name: Combine a model preset with a separately installed research preset
+        shell: pwsh
+        run: |
+          python scripts/presets.py build --preset ptc-workflow-openai-sol-6-2 --output dist/model.zip
+          if ($LASTEXITCODE -ne 0) { throw 'Model build failed' }
+          python scripts/presets.py build --only --team research --output dist/research.zip
+          if ($LASTEXITCODE -ne 0) { throw 'Research build failed' }
+          Expand-Archive dist/model.zip -DestinationPath dist/model
+          Expand-Archive dist/research.zip -DestinationPath dist/research
+          $profileFixture = (New-Item -ItemType Directory -Path 'dist/selective profile').FullName
+          & ./dist/model/Install-DSH-PTC.ps1 -ProfileDir $profileFixture
+          & ./dist/research/Install-DSH-PTC.ps1 -ProfileDir $profileFixture
+          python -B -X utf8 addons/research-manager/install.py --profile-dir $profileFixture --apply
+          if ($LASTEXITCODE -ne 0) { throw 'Selective Research Manager install failed' }
+          $patch = Join-Path $profileFixture 'cordis.patch.yml'
+          $manifest = Get-Content dist/research/manifest.json -Raw | ConvertFrom-Json
+          $expected = $manifest.presets.id + @('ptc-workflow-openai-sol-6-2', 'dsh-research-manager')
+          $actual = @(Select-String -LiteralPath $patch -Pattern '^        id: (ptc-[\w-]+|dsh-research-manager)$' |
+            ForEach-Object { $_.Matches[0].Groups[1].Value })
+          if (($actual.Count -ne $expected.Count) -or (Compare-Object $expected $actual)) {
+            throw 'Selective install added unexpected presets or lost existing presets'
+          }
+          $before = (Get-FileHash -LiteralPath $patch).Hash
+          & ./dist/model/Install-DSH-PTC.ps1 -ProfileDir $profileFixture
+          if ((Get-FileHash -LiteralPath $patch).Hash -ne $before) { throw 'Model reinstall changed the research setup' }

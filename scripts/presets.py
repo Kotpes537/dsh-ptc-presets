@@ -136,8 +136,9 @@ def source_content(repo, revision, path):
     return content
 
 
-def build(output, repo, selected_teams=()):
+def build(output, repo, selected_teams=(), selected_presets=(), only=False):
     lock, catalog = spec()
+    teams = teams_for(catalog)
     files = {
         p.relative_to(PRESETS).as_posix(): p.read_bytes()
         for p in (PRESETS / "local-plugins").rglob("*")
@@ -146,10 +147,33 @@ def build(output, repo, selected_teams=()):
     for name in ("Install-DSH-PTC.ps1", "ptc.patch.yml.in"):
         files[name] = (PRESETS / name).read_bytes()
     files["ptc.patch.yml.in"], enabled_teams = team_template(
-        files["ptc.patch.yml.in"], teams_for(catalog), selected_teams
+        files["ptc.patch.yml.in"], teams, selected_teams
     )
+    prompts = lock["prompts"]
+    selection = None
+    if selected_presets or only:
+        ids = set(selected_presets)
+        for name in enabled_teams:
+            ids.add(teams[name]["lead"])
+            ids.update(teams[name]["subagents"])
+        if not ids:
+            raise ValueError("Select at least one preset or team")
+        ids.add(REVIEW_PRESET)
+        if any(item.startswith("ptc-workflow-") and item != REVIEW_PRESET for item in ids):
+            ids.add("ptc-workflow")
+        catalog = [item for item in catalog if item["id"] in ids]
+        selection = [item["id"] for item in catalog]
+        template = files["ptc.patch.yml.in"].decode("utf-8")
+        blocks = dict(re.findall(r"(?ms)^    - id: preset-([\w-]+)\r?\n(.*?)(?=^    - id: |^\S|\Z)", template))
+        selected_blocks = "\n".join(blocks[item] for item in selection)
+        sources = set(re.findall(r"config: \{ source: ([\w.-]+) \}", selected_blocks))
+        if "ptc-astra" in ids:
+            sources.add("astra-6.2")
+        if "ptc-workflow-fable-full" in ids:
+            sources.add("fable-5.2-system")
+        prompts = [item for item in prompts if PurePosixPath(item["target"]).stem in sources]
     cached_sources = {}
-    for item in lock["prompts"]:
+    for item in prompts:
         key = (item["revision"], item["path"])
         if key not in cached_sources:
             cached_sources[key] = source_content(repo, *key)
@@ -159,6 +183,7 @@ def build(output, repo, selected_teams=()):
         "dshVersion": "0.2.2-rc.5",
         "sourceRevision": lock["reviewed_commit"],
         "presets": catalog,
+        "selectedPresets": selection,
         "teams": enabled_teams,
         "files": [{"path": name, "sha256": sha256(data)} for name, data in sorted(files.items())],
     })
@@ -172,7 +197,7 @@ def build(output, repo, selected_teams=()):
         temporary.replace(output)
     finally:
         temporary.unlink(missing_ok=True)
-    print(f"{output} — {len(catalog)} presets, {len(lock['prompts'])} verified prompt files")
+    print(f"{output} — {len(catalog)} presets, {len(prompts)} verified prompt files")
 
 
 @contextmanager
@@ -277,13 +302,20 @@ def main():
     build_args.add_argument("--team", action="append", default=[],
                             choices=[*read_json(PRESETS / "teams.json"), "all"],
                             help="Allow subagent presets for one team (repeatable)")
+    build_args.add_argument("--preset", action="append", default=[],
+                            choices=[item["id"] for item in read_json(PRESETS / "catalog.json")],
+                            help="Include a preset and its dependencies (repeatable)")
+    build_args.add_argument("--only", action="store_true",
+                            help="Include only the selected teams and their dependencies")
     monitor_args = action.add_parser("upstream", help="Compare the archive with the reviewed revision")
     monitor_args.add_argument("--output", type=Path)
     monitor_args.add_argument("--source-repo", type=Path, help="Existing upstream clone instead of a fresh clone")
     monitor_args.add_argument("--head", help="Compare against a pinned revision instead of HEAD")
     opts = parser.parse_args()
     if opts.action == "build":
-        build(opts.output, opts.source_repo, opts.team)
+        if opts.only and not (opts.preset or opts.team):
+            build_args.error("--only needs --preset or --team")
+        build(opts.output, opts.source_repo, opts.team, opts.preset, opts.only)
     elif opts.action == "upstream":
         monitor(opts.source_repo, opts.output, opts.head)
     else:
