@@ -39,6 +39,7 @@ export function apply(ctx) {
       'Use read, glob and grep inside your initial workspace to compare the available evidence with the supplied acceptance criteria.',
       'If input is missing, report the specific missing path or criterion to the lead.',
       'Report actionable findings with path, observable evidence, impact and a suggested correction. Distinguish static inspection from any test result supplied by the lead. Ask the lead to run required checks.',
+      'For architecture findings, trace concrete imports or call sites that form a dependency cycle or rely on another module’s implementation details. Explain what change would force edits across those sites, and suggest a narrower interface only when it reduces that coupling.',
       'Return a concise result that the lead can verify and integrate.',
     ].join(' '),
   });
