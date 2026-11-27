@@ -136,6 +136,19 @@ def source_content(repo, revision, path):
     return content
 
 
+def prompt_targets(template, selected_ids, prompts):
+    blocks = dict(re.findall(
+        r"(?ms)^    - id: preset-([\w-]+)\r?\n(.*?)(?=^    - id: |^\S|\Z)", template
+    ))
+    selected_blocks = "\n".join(blocks[item] for item in selected_ids if item in blocks)
+    sources = set(re.findall(r"config: \{ source: ([\w.-]+) \}", selected_blocks))
+    if "ptc-astra" in selected_ids:
+        sources.add("astra-6.2")
+    if "ptc-workflow-fable-full" in selected_ids:
+        sources.add("fable-5.2-system")
+    return [item for item in prompts if PurePosixPath(item["target"]).stem in sources]
+
+
 def build(output, repo, selected_teams=(), selected_presets=(), only=False):
     lock, catalog = spec()
     teams = teams_for(catalog)
@@ -164,14 +177,7 @@ def build(output, repo, selected_teams=(), selected_presets=(), only=False):
         catalog = [item for item in catalog if item["id"] in ids]
         selection = [item["id"] for item in catalog]
         template = files["ptc.patch.yml.in"].decode("utf-8")
-        blocks = dict(re.findall(r"(?ms)^    - id: preset-([\w-]+)\r?\n(.*?)(?=^    - id: |^\S|\Z)", template))
-        selected_blocks = "\n".join(blocks[item] for item in selection)
-        sources = set(re.findall(r"config: \{ source: ([\w.-]+) \}", selected_blocks))
-        if "ptc-astra" in ids:
-            sources.add("astra-6.2")
-        if "ptc-workflow-fable-full" in ids:
-            sources.add("fable-5.2-system")
-        prompts = [item for item in prompts if PurePosixPath(item["target"]).stem in sources]
+        prompts = prompt_targets(template, ids, prompts)
     cached_sources = {}
     for item in prompts:
         key = (item["revision"], item["path"])
