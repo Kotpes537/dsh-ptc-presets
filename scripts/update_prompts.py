@@ -25,8 +25,8 @@ WAIT_SECONDS = 15 * 60
 
 def installed_paths(profile, prompts):
     patch = (profile / "cordis.patch.yml").read_bytes()
-    document = patch.decode("utf-8-sig")
-    ids = set(re.findall(r"(?m)^\s*- id: preset-(ptc-[a-z0-9-]+)\s*$", document))
+    document = presets.migrate_ids(patch.decode("utf-8-sig"))
+    ids = set(re.findall(r"(?m)^\s*- id: preset-([a-z][a-z0-9-]+)\s*$", document))
     if not ids:
         raise ValueError("В профиле не найдены установленные PTC-пресеты.")
     return patch, presets.prompt_targets(document, ids, prompts)

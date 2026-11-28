@@ -12,13 +12,23 @@ from scripts import presets
 
 
 class PresetTests(unittest.TestCase):
+    def test_legacy_ids_migrate_without_renaming_plugin_paths(self):
+        text = ('    - id: preset-ptc-astra\n        id: ptc-astra\n'
+                'allowedAgentPresets: [ ptc-workflow-review, ptc-workflow-glm-5-3 ]\n'
+                "file:///profile/local-plugins/ptc-astra/index.mjs\n")
+        migrated = presets.migrate_ids(text)
+        self.assertIn('preset-astra', migrated)
+        self.assertIn('[ review, glm-5-3 ]', migrated)
+        self.assertIn('/ptc-astra/index.mjs', migrated)
+        self.assertEqual(migrated, presets.migrate_ids(migrated))
+
     def test_build_accepts_menu_names_and_existing_ids(self):
         with patch("sys.argv", ["presets.py", "build", "--preset", "claude sonnet 5.5",
                                 "--preset", "Ревью", "--preset", "ptc-astra"]):
             with patch.object(presets, "build") as build:
                 presets.main()
         self.assertEqual(build.call_args.args[3], [
-            "ptc-workflow-claude-sonnet-5-5", "ptc-workflow-review", "ptc-astra",
+            "sonnet-5-5", "review", "astra",
         ])
 
     def test_configuration_catalog_and_archive_references(self):
@@ -56,7 +66,7 @@ class PresetTests(unittest.TestCase):
         self.assertEqual(presets.team_template(template, teams, []), (template, []))
         debug, names = presets.team_template(template, teams, ["debug", "debug"])
         self.assertEqual(names, ["debug"])
-        self.assertIn(b"allowedAgentPresets: [ ptc-workflow-review, ptc-workflow-glm-5-3 ]", debug)
+        self.assertIn(b"allowedAgentPresets: [ review, glm-5-3 ]", debug)
         combined, names = presets.team_template(template, teams, ["all"])
         self.assertEqual(names, list(teams))
         self.assertEqual(len(combined.splitlines()), len(template.splitlines()))
@@ -66,7 +76,7 @@ class PresetTests(unittest.TestCase):
         for team in teams.values():
             for child in team["subagents"]:
                 self.assertIn(child, line)
-        self.assertIn("ptc-workflow-review", line)
+        self.assertIn("review", line)
 
     def test_upstream_detects_rename_and_new_candidate(self):
         with TemporaryDirectory() as temp:

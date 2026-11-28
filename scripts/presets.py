@@ -17,8 +17,8 @@ from zipfile import ZIP_DEFLATED, ZipFile
 ROOT = Path(__file__).resolve().parents[1]
 PRESETS = ROOT / "presets"
 LOCK_FILE = PRESETS / "upstream.lock.json"
-TEAM_SLOT = "                  allowedAgentPresets: [ ptc-workflow-review ]"
-REVIEW_PRESET = "ptc-workflow-review"
+TEAM_SLOT = "                  allowedAgentPresets: [ review ]"
+REVIEW_PRESET = "review"
 REPOSITORY = "asgeirtj/system_prompts_leaks"
 UPSTREAM = f"https://github.com/{REPOSITORY}"
 SHA = re.compile(r"[a-f0-9]{40}")
@@ -37,6 +37,13 @@ def encode_json(value):
     return (json.dumps(value, indent=2, ensure_ascii=False) + "\n").encode("utf-8")
 
 
+def migrate_ids(text):
+    aliases = read_json(PRESETS / "legacy-ids.json")
+    tokens = "|".join(re.escape(key) for key in sorted(aliases, key=len, reverse=True))
+    pattern = r"(?<![a-zA-Z0-9_/-])(?P<prefix>preset-)?(?P<id>" + tokens + r")(?![a-zA-Z0-9_/.:-])"
+    return re.sub(pattern, lambda match: (match["prefix"] or "") + aliases[match["id"]], text)
+
+
 def safe_path(path):
     return re.fullmatch(r"[a-zA-Z0-9_./-]+", path) and all(
         part not in {"", ".", ".."} for part in path.split("/")
@@ -51,7 +58,7 @@ def spec():
     if not SHA.fullmatch(lock["reviewed_commit"]):
         raise ValueError("Upstream review checkpoint must be a commit SHA")
     by_id = {row["id"]: row["name"] for row in catalog}
-    if any(not re.fullmatch(r"ptc-[a-z0-9-]+", row_id) for row_id in by_id):
+    if any(not re.fullmatch(r"[a-z][a-z0-9-]+", row_id) for row_id in by_id):
         raise ValueError("Unexpected preset ID")
     if len(by_id) != len(catalog) or len({name.casefold() for name in by_id.values()}) != len(catalog):
         raise ValueError("Duplicate preset identifier or title")
@@ -59,7 +66,7 @@ def spec():
     template = (PRESETS / "ptc.patch.yml.in").read_text(encoding="utf-8")
     declared = {
         row_id: json.loads(name) if name.startswith('"') else name
-        for row_id, name in re.findall(r"(?m)^        id: (ptc-[a-z0-9-]+)\n        name: (.+)$", template)
+        for row_id, name in re.findall(r"(?m)^        id: ([a-z][a-z0-9-]+)\n        name: (.+)$", template)
     }
     if declared != by_id:
         raise ValueError("Preset labels/IDs are out of sync with the DSH declarations")
@@ -94,7 +101,6 @@ def teams_for(catalog):
         if (name == "all" or not re.fullmatch(r"[a-z][a-z0-9-]*", name)
                 or not children or len(member_ids) != len(children) + 1
                 or REVIEW_PRESET in member_ids
-                or not all(p.startswith("ptc-workflow-") for p in member_ids)
                 or not member_ids <= ids):
             raise ValueError(f"Invalid Workflow team: {name}")
     return teams
@@ -142,9 +148,9 @@ def prompt_targets(template, selected_ids, prompts):
     ))
     selected_blocks = "\n".join(blocks[item] for item in selected_ids if item in blocks)
     sources = set(re.findall(r"config: \{ source: ([\w.-]+) \}", selected_blocks))
-    if "ptc-astra" in selected_ids:
+    if "astra" in selected_ids:
         sources.add("astra-6.2")
-    if "ptc-workflow-fable-full" in selected_ids:
+    if "fable-5-2-full" in selected_ids:
         sources.add("fable-5.2-system")
     return [item for item in prompts if PurePosixPath(item["target"]).stem in sources]
 
@@ -157,7 +163,7 @@ def build(output, repo, selected_teams=(), selected_presets=(), only=False):
         for p in (PRESETS / "local-plugins").rglob("*")
         if p.is_file() and ASSET_PATH.fullmatch(p.relative_to(PRESETS).as_posix())
     }
-    for name in ("Install-DSH-PTC.ps1", "ptc.patch.yml.in"):
+    for name in ("Install-DSH-PTC.ps1", "ptc.patch.yml.in", "legacy-ids.json", "legacy-plugins.json"):
         files[name] = (PRESETS / name).read_bytes()
     files["ptc.patch.yml.in"], enabled_teams = team_template(
         files["ptc.patch.yml.in"], teams, selected_teams
@@ -172,8 +178,8 @@ def build(output, repo, selected_teams=(), selected_presets=(), only=False):
         if not ids:
             raise ValueError("Select at least one preset or team")
         ids.add(REVIEW_PRESET)
-        if any(item.startswith("ptc-workflow-") and item != REVIEW_PRESET for item in ids):
-            ids.add("ptc-workflow")
+        if ids - {"astra", REVIEW_PRESET}:
+            ids.add("general")
         catalog = [item for item in catalog if item["id"] in ids]
         selection = [item["id"] for item in catalog]
         template = files["ptc.patch.yml.in"].decode("utf-8")
@@ -324,6 +330,7 @@ def main():
         catalog = read_json(PRESETS / "catalog.json")
         by_name = {row["name"].casefold(): row["id"] for row in catalog}
         by_name.update({row["id"]: row["id"] for row in catalog})
+        by_name.update(read_json(PRESETS / "legacy-ids.json"))
         selections = []
         for name in opts.preset:
             preset_id = by_name.get(name.strip().casefold())

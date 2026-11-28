@@ -1,0 +1,7 @@
+{
+  "local-plugins/ptc-astra/delegation-budget.mjs": "9b2782e51ebb031ff3a71a551639a6fd07fd184c825c7a17281e0c44abbeec68",
+  "local-plugins/ptc-workflow/fable-full.mjs": "a3bff9b2141082467d480a7180b42779ae08f152ce4c89dbd4ebf43536f423ae",
+  "local-plugins/ptc-workflow/full-prompts/index.mjs": "3b58ef2f4aa115a12f44161b460b64a34998df76d8e5204b9bc411e27fdafb41",
+  "local-plugins/ptc-workflow/index.mjs": "0651a895599c8ba4eb5a929554cd6216502093567a2dce4332767a85074941ed",
+  "local-plugins/ptc-workflow/skills/dsh-marketing-research/SKILL.md": "afa9d973724985d793f36c429f54457707883984a5e18c6cd955da187b550ead"
+}

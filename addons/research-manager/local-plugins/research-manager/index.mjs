@@ -1,6 +1,6 @@
 import { readFileSync } from 'node:fs';
 
-export const name = 'dsh-research-manager';
+export const name = 'research';
 export const inject = ['systemPrompt'];
 
 const contract = readFileSync(new URL('./contract.md', import.meta.url), 'utf8');

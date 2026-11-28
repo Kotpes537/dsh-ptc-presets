@@ -43,7 +43,7 @@ jobs:
           $before = (Get-FileHash -LiteralPath $patch).Hash
           & ./dist/teams/Install-DSH-PTC.ps1 -ProfileDir $profileFixture
           $allowlist = Get-Content -LiteralPath $patch | Select-String '^\s+allowedAgentPresets:'
-          foreach ($id in @('ptc-workflow-review','ptc-workflow-glm-5-3','ptc-workflow-gemini-4-neon','ptc-workflow-grok-4-7','ptc-workflow-qwen-3-8-max')) {
+          foreach ($id in @('review','glm-5-3','gemini-4-neon','grok-4-7','qwen-3-8-max')) {
             if (@($allowlist | Where-Object { $_.Line -notlike "*$id*" }).Count) { throw "Missing allowlisted preset $id" }
           }
           $teamHash = (Get-FileHash -LiteralPath $patch).Hash
@@ -63,7 +63,7 @@ jobs:
           if ((Get-FileHash -LiteralPath $patch).Hash -ne $before) { throw 'Preview changed the profile' }
           python -B -X utf8 addons/research-manager/install.py --profile-dir $profileFixture --apply
           if ($LASTEXITCODE -ne 0) { throw 'Research Manager install failed' }
-          if (@(Select-String -LiteralPath $patch -Pattern '^    - id: preset-dsh-research-manager$').Count -ne 1) {
+          if (@(Select-String -LiteralPath $patch -Pattern '^    - id: preset-research$').Count -ne 1) {
             throw 'Expected one Research Manager declaration'
           }
           $installed = (Get-FileHash -LiteralPath $patch).Hash
@@ -73,7 +73,7 @@ jobs:
       - name: Combine a model preset with a separately installed research preset
         shell: pwsh
         run: |
-          python scripts/presets.py build --preset ptc-workflow-openai-sol-6-2 --output dist/model.zip
+          python scripts/presets.py build --preset sol-6-2 --output dist/model.zip
           if ($LASTEXITCODE -ne 0) { throw 'Model build failed' }
           python scripts/presets.py build --only --team research --output dist/research.zip
           if ($LASTEXITCODE -ne 0) { throw 'Research build failed' }
@@ -86,8 +86,8 @@ jobs:
           if ($LASTEXITCODE -ne 0) { throw 'Selective Research Manager install failed' }
           $patch = Join-Path $profileFixture 'cordis.patch.yml'
           $manifest = Get-Content dist/research/manifest.json -Raw | ConvertFrom-Json
-          $expected = $manifest.presets.id + @('ptc-workflow-openai-sol-6-2', 'dsh-research-manager')
-          $actual = @(Select-String -LiteralPath $patch -Pattern '^        id: (ptc-[\w-]+|dsh-research-manager)$' |
+          $expected = $manifest.presets.id + @('sol-6-2', 'research')
+          $actual = @(Select-String -LiteralPath $patch -Pattern '^        id: ([a-z][\w-]+)$' |
             ForEach-Object { $_.Matches[0].Groups[1].Value })
           if (($actual.Count -ne $expected.Count) -or (Compare-Object $expected $actual)) {
             throw 'Selective install added unexpected presets or lost existing presets'

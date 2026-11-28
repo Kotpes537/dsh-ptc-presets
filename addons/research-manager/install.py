@@ -9,12 +9,12 @@ from tempfile import NamedTemporaryFile
 
 PACKAGE = Path(__file__).resolve().parent
 HIGH_MODULE = Path('local-plugins/ptc-astra/high-max.mjs')
-BASE = 'preset-ptc-workflow-fable-full'
-PRESET = 'preset-dsh-research-manager'
+BASE = 'preset-fable-5-2-full'
+PRESET = 'preset-research'
 MARKER = '# BEGIN DSH RESEARCH MANAGER'
 END = '# END DSH RESEARCH MANAGER'
-ROLES = ('ptc-workflow-gemini-4-neon', 'ptc-workflow-qwen-3-8-max',
-         'ptc-workflow-glm-5-3', 'ptc-workflow-review')
+ROLES = ('gemini-4-neon', 'qwen-3-8-max',
+         'glm-5-3', 'review')
 
 
 def render(patch, profile):
@@ -52,7 +52,7 @@ def render(patch, profile):
         f'    - id: {PRESET}',
         "      name: '@deepseek-ai/dsh-agent-preset'",
         '      config:',
-        '        id: dsh-research-manager',
+        '        id: research',
         '        name: "Research Manager"',
         '        description: "Потребительские исследования, методика, анализ и ревью."',
         '        order: 2.27',

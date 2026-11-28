@@ -1,8 +1,8 @@
 - insert:
-    - id: preset-ptc-astra
+    - id: preset-astra
       name: '@deepseek-ai/dsh-agent-preset'
       config:
-        id: ptc-astra
+        id: astra
         name: "Astra"
         description: Тестовый PTC с исходным промптом GPT-6.2 Astra.
         order: 2.1
@@ -99,7 +99,7 @@
                   toolName: subagent
                   modelSelection: true
                   modelDiscovery: true
-                  allowedAgentPresets: [ ptc-workflow-review ]
+                  allowedAgentPresets: [ review ]
               - id: tool-subagent-fork
                 name: '@deepseek-ai/dsh-tool-subagent'
                 config:
@@ -148,10 +148,10 @@
 # BEGIN DSH PTC WORKFLOW
 
 - insert:
-    - id: preset-ptc-workflow
+    - id: preset-general
       name: '@deepseek-ai/dsh-agent-preset'
       config:
-        id: ptc-workflow
+        id: general
         name: "Workflow"
         description: "Длинные задачи, проверка результата и возобновление после сжатия."
         order: 2.20
@@ -272,7 +272,7 @@
                   toolName: subagent
                   modelSelection: true
                   modelDiscovery: true
-                  allowedAgentPresets: [ ptc-workflow-review ]
+                  allowedAgentPresets: [ review ]
               - id: tool-subagent-fork
                 name: '@deepseek-ai/dsh-tool-subagent'
                 config:
@@ -320,10 +320,10 @@
           - id: workflow-instructions
             name: "__DSH_PROFILE_URI__/local-plugins/ptc-workflow/index.mjs?v=4"
             config: { variant: workflow }
-    - id: preset-ptc-workflow-anthropic
+    - id: preset-anthropic
       name: '@deepseek-ai/dsh-agent-preset'
       config:
-        id: ptc-workflow-anthropic
+        id: anthropic
         name: "Claude"
         description: "Самодостаточные поручения, независимое ревью и завершение работы."
         order: 2.25
@@ -355,10 +355,10 @@
           - id: workflow-instructions
             name: "__DSH_PROFILE_URI__/local-plugins/ptc-workflow/index.mjs?v=4"
             config: { variant: anthropic }
-    - id: preset-ptc-workflow-fable-full
+    - id: preset-fable-5-2-full
       name: '@deepseek-ai/dsh-agent-preset'
       config:
-        id: ptc-workflow-fable-full
+        id: fable-5-2-full
         name: "Claude Fable 5.2 Full"
         description: "Полный системный текст Claude Code Fable 5.2 и правила
           совместимости с DSH."
@@ -390,10 +390,10 @@
           - *wf_tool_plugin_market
           - id: workflow-instructions
             name: '__DSH_PROFILE_URI__/local-plugins/ptc-workflow/fable-full.mjs?v=3'
-    - id: preset-ptc-workflow-openai
+    - id: preset-openai
       name: '@deepseek-ai/dsh-agent-preset'
       config:
-        id: ptc-workflow-openai
+        id: openai
         name: "Codex"
         description: "Работа до проверенного результата и точные границы запроса."
         order: 2.30
@@ -425,10 +425,10 @@
           - id: workflow-instructions
             name: "__DSH_PROFILE_URI__/local-plugins/ptc-workflow/index.mjs?v=4"
             config: { variant: openai }
-    - id: preset-ptc-workflow-glm
+    - id: preset-glm
       name: '@deepseek-ai/dsh-agent-preset'
       config:
-        id: ptc-workflow-glm
+        id: glm
         name: "GLM"
         description: "Диагностика по наблюдениям и обоснованный выбор действия."
         order: 2.35
@@ -460,10 +460,10 @@
           - id: workflow-instructions
             name: "__DSH_PROFILE_URI__/local-plugins/ptc-workflow/index.mjs?v=4"
             config: { variant: glm }
-    - id: preset-ptc-workflow-kimi
+    - id: preset-kimi
       name: '@deepseek-ai/dsh-agent-preset'
       config:
-        id: ptc-workflow-kimi
+        id: kimi
         name: "Kimi"
         description: "Этапы длинной задачи, навыки и полнота выдачи."
         order: 2.40
@@ -495,10 +495,10 @@
           - id: workflow-instructions
             name: "__DSH_PROFILE_URI__/local-plugins/ptc-workflow/index.mjs?v=4"
             config: { variant: kimi }
-    - id: preset-ptc-workflow-google
+    - id: preset-google
       name: '@deepseek-ai/dsh-agent-preset'
       config:
-        id: ptc-workflow-google
+        id: google
         name: "Gemini"
         description: "Исследование кода, небольшие изменения и проверки по этапам."
         order: 2.45
@@ -530,10 +530,10 @@
           - id: workflow-instructions
             name: "__DSH_PROFILE_URI__/local-plugins/ptc-workflow/index.mjs?v=4"
             config: { variant: google }
-    - id: preset-ptc-workflow-qwen
+    - id: preset-qwen
       name: '@deepseek-ai/dsh-agent-preset'
       config:
-        id: ptc-workflow-qwen
+        id: qwen
         name: "Qwen"
         description: "Пакеты независимых вызовов и экономный контекст."
         order: 2.50
@@ -565,10 +565,10 @@
           - id: workflow-instructions
             name: "__DSH_PROFILE_URI__/local-plugins/ptc-workflow/index.mjs?v=4"
             config: { variant: qwen }
-    - id: preset-ptc-workflow-review
+    - id: preset-review
       name: '@deepseek-ai/dsh-agent-preset'
       config:
-        id: ptc-workflow-review
+        id: review
         name: "Ревью"
         description: "Независимая проверка файлов в рабочей папке. Только чтение."
         order: 2.56
@@ -601,10 +601,10 @@
             name: "__DSH_PROFILE_URI__/local-plugins/ptc-workflow/reviewer.mjs"
 
     # BEGIN DSH PTC FULL MODEL VARIANTS
-    - id: preset-ptc-workflow-claude-opus-5-5-full
+    - id: preset-opus-5-5-full
       name: '@deepseek-ai/dsh-agent-preset'
       config:
-        id: ptc-workflow-claude-opus-5-5-full
+        id: opus-5-5-full
         name: "Claude Opus 5.5 Full"
         description: "Полный системный текст из Claude Code CLI и правила совместимости
           DSH."
@@ -637,10 +637,10 @@
           - id: workflow-instructions
             name: '__DSH_PROFILE_URI__/local-plugins/ptc-workflow/full-prompts/index.mjs?v=3'
             config: { source: claude-opus-5-5 }
-    - id: preset-ptc-workflow-claude-sonnet-5-5-full
+    - id: preset-sonnet-5-5-full
       name: '@deepseek-ai/dsh-agent-preset'
       config:
-        id: ptc-workflow-claude-sonnet-5-5-full
+        id: sonnet-5-5-full
         name: "Claude Sonnet 5.5 Full"
         description: "Полный системный текст из Claude Code CLI и правила совместимости
           DSH."
@@ -673,10 +673,10 @@
           - id: workflow-instructions
             name: '__DSH_PROFILE_URI__/local-plugins/ptc-workflow/full-prompts/index.mjs?v=3'
             config: { source: claude-sonnet-5-5 }
-    - id: preset-ptc-workflow-openai-astra-6-2-full
+    - id: preset-astra-6-2-full
       name: '@deepseek-ai/dsh-agent-preset'
       config:
-        id: ptc-workflow-openai-astra-6-2-full
+        id: astra-6-2-full
         name: "GPT-6.2 Astra Full"
         description: "Полный системный текст из Codex и правила совместимости DSH."
         order: 2.31
@@ -708,10 +708,10 @@
           - id: workflow-instructions
             name: '__DSH_PROFILE_URI__/local-plugins/ptc-workflow/full-prompts/index.mjs?v=3'
             config: { source: openai-astra-6-2 }
-    - id: preset-ptc-workflow-openai-sol-6-2-full
+    - id: preset-sol-6-2-full
       name: '@deepseek-ai/dsh-agent-preset'
       config:
-        id: ptc-workflow-openai-sol-6-2-full
+        id: sol-6-2-full
         name: "GPT-6.2 Sol Full"
         description: "Полный системный текст из Codex и правила совместимости DSH."
         order: 2.32
@@ -743,10 +743,10 @@
           - id: workflow-instructions
             name: '__DSH_PROFILE_URI__/local-plugins/ptc-workflow/full-prompts/index.mjs?v=3'
             config: { source: openai-sol-6-2 }
-    - id: preset-ptc-workflow-glm-5-3-full
+    - id: preset-glm-5-3-full
       name: '@deepseek-ai/dsh-agent-preset'
       config:
-        id: ptc-workflow-glm-5-3-full
+        id: glm-5-3-full
         name: "GLM-5.3 Full"
         description: "Полный системный текст из ZCode Desktop и правила совместимости DSH."
         order: 2.36
@@ -778,10 +778,10 @@
           - id: workflow-instructions
             name: '__DSH_PROFILE_URI__/local-plugins/ptc-workflow/full-prompts/index.mjs?v=3'
             config: { source: glm-5-3 }
-    - id: preset-ptc-workflow-kimi-k3-full
+    - id: preset-kimi-k3-full
       name: '@deepseek-ai/dsh-agent-preset'
       config:
-        id: ptc-workflow-kimi-k3-full
+        id: kimi-k3-full
         name: "Kimi K3 Full"
         description: "Полный системный текст из Kimi и правила совместимости DSH."
         order: 2.41
@@ -813,10 +813,10 @@
           - id: workflow-instructions
             name: '__DSH_PROFILE_URI__/local-plugins/ptc-workflow/full-prompts/index.mjs?v=3'
             config: { source: kimi-k3 }
-    - id: preset-ptc-workflow-google-gemini-4-argon-full
+    - id: preset-gemini-4-argon-full
       name: '@deepseek-ai/dsh-agent-preset'
       config:
-        id: ptc-workflow-google-gemini-4-argon-full
+        id: gemini-4-argon-full
         name: "Gemini 4 Argon Full"
         description: "Полный системный текст из Antigravity CLI и правила совместимости
           DSH."
@@ -849,10 +849,10 @@
           - id: workflow-instructions
             name: '__DSH_PROFILE_URI__/local-plugins/ptc-workflow/full-prompts/index.mjs?v=3'
             config: { source: google-gemini-4-argon }
-    - id: preset-ptc-workflow-qwen-4-0-max-full
+    - id: preset-qwen-4-0-max-full
       name: '@deepseek-ai/dsh-agent-preset'
       config:
-        id: ptc-workflow-qwen-4-0-max-full
+        id: qwen-4-0-max-full
         name: "Qwen 4.0 Max Full"
         description: "Полный системный текст из Qwen и правила совместимости DSH."
         order: 2.51
@@ -884,10 +884,10 @@
           - id: workflow-instructions
             name: '__DSH_PROFILE_URI__/local-plugins/ptc-workflow/full-prompts/index.mjs?v=3'
             config: { source: qwen-4-0-max }
-    - id: preset-ptc-workflow-claude-haiku-5-5-full
+    - id: preset-haiku-5-5-full
       name: '@deepseek-ai/dsh-agent-preset'
       config:
-        id: ptc-workflow-claude-haiku-5-5-full
+        id: haiku-5-5-full
         name: "Claude Haiku 5.5 Full"
         description: "Архивные поведенческие инструкции и слой совместимости DSH."
         order: 2.610
@@ -919,10 +919,10 @@
           - id: workflow-instructions
             name: '__DSH_PROFILE_URI__/local-plugins/ptc-workflow/full-prompts/index.mjs?v=3'
             config: { source: claude-haiku-5-5 }
-    - id: preset-ptc-workflow-claude-fable-5-1-full
+    - id: preset-fable-5-1-full
       name: '@deepseek-ai/dsh-agent-preset'
       config:
-        id: ptc-workflow-claude-fable-5-1-full
+        id: fable-5-1-full
         name: "Claude Fable 5.1 Full"
         description: "Архивные поведенческие инструкции и слой совместимости DSH."
         order: 2.614
@@ -954,10 +954,10 @@
           - id: workflow-instructions
             name: '__DSH_PROFILE_URI__/local-plugins/ptc-workflow/full-prompts/index.mjs?v=3'
             config: { source: claude-fable-5-1 }
-    - id: preset-ptc-workflow-claude-opus-5-full
+    - id: preset-opus-5-full
       name: '@deepseek-ai/dsh-agent-preset'
       config:
-        id: ptc-workflow-claude-opus-5-full
+        id: opus-5-full
         name: "Claude Opus 5 Full"
         description: "Архивные поведенческие инструкции и слой совместимости DSH."
         order: 2.618
@@ -989,10 +989,10 @@
           - id: workflow-instructions
             name: '__DSH_PROFILE_URI__/local-plugins/ptc-workflow/full-prompts/index.mjs?v=3'
             config: { source: claude-opus-5 }
-    - id: preset-ptc-workflow-claude-opus-4-8-full
+    - id: preset-opus-4-8-full
       name: '@deepseek-ai/dsh-agent-preset'
       config:
-        id: ptc-workflow-claude-opus-4-8-full
+        id: opus-4-8-full
         name: "Claude Opus 4.8 Full"
         description: "Архивные поведенческие инструкции и слой совместимости DSH."
         order: 2.622
@@ -1024,10 +1024,10 @@
           - id: workflow-instructions
             name: '__DSH_PROFILE_URI__/local-plugins/ptc-workflow/full-prompts/index.mjs?v=3'
             config: { source: claude-opus-4-8 }
-    - id: preset-ptc-workflow-claude-sonnet-5-full
+    - id: preset-sonnet-5-full
       name: '@deepseek-ai/dsh-agent-preset'
       config:
-        id: ptc-workflow-claude-sonnet-5-full
+        id: sonnet-5-full
         name: "Claude Sonnet 5 Full"
         description: "Архивные поведенческие инструкции и слой совместимости DSH."
         order: 2.626
@@ -1059,10 +1059,10 @@
           - id: workflow-instructions
             name: '__DSH_PROFILE_URI__/local-plugins/ptc-workflow/full-prompts/index.mjs?v=3'
             config: { source: claude-sonnet-5 }
-    - id: preset-ptc-workflow-grok-4-7-full
+    - id: preset-grok-4-7-full
       name: '@deepseek-ai/dsh-agent-preset'
       config:
-        id: ptc-workflow-grok-4-7-full
+        id: grok-4-7-full
         name: "Grok 4.7 Full"
         description: "Архивные поведенческие инструкции и слой совместимости DSH."
         order: 2.630
@@ -1094,10 +1094,10 @@
           - id: workflow-instructions
             name: '__DSH_PROFILE_URI__/local-plugins/ptc-workflow/full-prompts/index.mjs?v=3'
             config: { source: grok-4-7 }
-    - id: preset-ptc-workflow-muse-spark-1-3-full
+    - id: preset-muse-spark-1-3-full
       name: '@deepseek-ai/dsh-agent-preset'
       config:
-        id: ptc-workflow-muse-spark-1-3-full
+        id: muse-spark-1-3-full
         name: "Muse Spark 1.3 Full"
         description: "Архивные поведенческие инструкции и слой совместимости DSH."
         order: 2.634
@@ -1129,10 +1129,10 @@
           - id: workflow-instructions
             name: '__DSH_PROFILE_URI__/local-plugins/ptc-workflow/full-prompts/index.mjs?v=3'
             config: { source: muse-spark-1-3 }
-    - id: preset-ptc-workflow-minimax-m3-full
+    - id: preset-minimax-m3-full
       name: '@deepseek-ai/dsh-agent-preset'
       config:
-        id: ptc-workflow-minimax-m3-full
+        id: minimax-m3-full
         name: "MiniMax M3 Full"
         description: "Архивные поведенческие инструкции и слой совместимости DSH."
         order: 2.638
@@ -1164,10 +1164,10 @@
           - id: workflow-instructions
             name: '__DSH_PROFILE_URI__/local-plugins/ptc-workflow/full-prompts/index.mjs?v=3'
             config: { source: minimax-m3 }
-    - id: preset-ptc-workflow-antigravity-cli
+    - id: preset-antigravity-cli
       name: '@deepseek-ai/dsh-agent-preset'
       config:
-        id: ptc-workflow-antigravity-cli
+        id: antigravity-cli
         name: "Antigravity CLI"
         description: "Архивные поведенческие инструкции и слой совместимости DSH."
         order: 2.642
@@ -1201,10 +1201,10 @@
             config: { source: antigravity-cli }
     # END DSH PTC FULL MODEL VARIANTS
     # BEGIN DSH PTC MODEL PRESETS
-    - id: preset-ptc-workflow-claude-fable-5-2
+    - id: preset-fable-5-2
       name: '@deepseek-ai/dsh-agent-preset'
       config:
-        id: ptc-workflow-claude-fable-5-2
+        id: fable-5-2
         name: "Claude Fable 5.2"
         description: "Адаптированный PTC для Claude Fable 5.2. Модель и провайдер
           выбираются отдельно."
@@ -1237,10 +1237,10 @@
           - id: workflow-instructions
             name: '__DSH_PROFILE_URI__/local-plugins/ptc-workflow/index.mjs?v=4'
             config: { variant: anthropic }
-    - id: preset-ptc-workflow-claude-opus-5-5
+    - id: preset-opus-5-5
       name: '@deepseek-ai/dsh-agent-preset'
       config:
-        id: ptc-workflow-claude-opus-5-5
+        id: opus-5-5
         name: "Claude Opus 5.5"
         description: "Адаптированный PTC для Claude Opus 5.5. Модель и провайдер
           выбираются отдельно."
@@ -1273,10 +1273,10 @@
           - id: workflow-instructions
             name: '__DSH_PROFILE_URI__/local-plugins/ptc-workflow/index.mjs?v=4'
             config: { variant: anthropic }
-    - id: preset-ptc-workflow-claude-sonnet-5-5
+    - id: preset-sonnet-5-5
       name: '@deepseek-ai/dsh-agent-preset'
       config:
-        id: ptc-workflow-claude-sonnet-5-5
+        id: sonnet-5-5
         name: "Claude Sonnet 5.5"
         description: "Адаптированный PTC для Claude Sonnet 5.5. Модель и провайдер
           выбираются отдельно."
@@ -1309,10 +1309,10 @@
           - id: workflow-instructions
             name: '__DSH_PROFILE_URI__/local-plugins/ptc-workflow/index.mjs?v=4'
             config: { variant: anthropic }
-    - id: preset-ptc-workflow-openai-astra-6-2
+    - id: preset-astra-6-2
       name: '@deepseek-ai/dsh-agent-preset'
       config:
-        id: ptc-workflow-openai-astra-6-2
+        id: astra-6-2
         name: "GPT-6.2 Astra"
         description: "Адаптированный PTC для OpenAI GPT-6.2 Astra. Модель и провайдер
           выбираются отдельно."
@@ -1345,10 +1345,10 @@
           - id: workflow-instructions
             name: '__DSH_PROFILE_URI__/local-plugins/ptc-workflow/index.mjs?v=4'
             config: { variant: openai }
-    - id: preset-ptc-workflow-openai-sol-6-2
+    - id: preset-sol-6-2
       name: '@deepseek-ai/dsh-agent-preset'
       config:
-        id: ptc-workflow-openai-sol-6-2
+        id: sol-6-2
         name: "GPT-6.2 Sol"
         description: "Адаптированный PTC для OpenAI GPT-6.2 Sol. Модель и провайдер
           выбираются отдельно."
@@ -1381,10 +1381,10 @@
           - id: workflow-instructions
             name: '__DSH_PROFILE_URI__/local-plugins/ptc-workflow/index.mjs?v=4'
             config: { variant: openai }
-    - id: preset-ptc-workflow-glm-5-3
+    - id: preset-glm-5-3
       name: '@deepseek-ai/dsh-agent-preset'
       config:
-        id: ptc-workflow-glm-5-3
+        id: glm-5-3
         name: "GLM-5.3"
         description: "Адаптированный PTC для GLM 5.3 ZCode. Модель и провайдер
           выбираются отдельно."
@@ -1417,10 +1417,10 @@
           - id: workflow-instructions
             name: '__DSH_PROFILE_URI__/local-plugins/ptc-workflow/index.mjs?v=4'
             config: { variant: glm }
-    - id: preset-ptc-workflow-kimi-k3
+    - id: preset-kimi-k3
       name: '@deepseek-ai/dsh-agent-preset'
       config:
-        id: ptc-workflow-kimi-k3
+        id: kimi-k3
         name: "Kimi K3"
         description: "Адаптированный PTC для Kimi K3. Модель и провайдер выбираются
           отдельно."
@@ -1453,10 +1453,10 @@
           - id: workflow-instructions
             name: '__DSH_PROFILE_URI__/local-plugins/ptc-workflow/index.mjs?v=4'
             config: { variant: kimi }
-    - id: preset-ptc-workflow-google-gemini-4-argon
+    - id: preset-gemini-4-argon
       name: '@deepseek-ai/dsh-agent-preset'
       config:
-        id: ptc-workflow-google-gemini-4-argon
+        id: gemini-4-argon
         name: "Gemini 4 Argon"
         description: "Адаптированный PTC для Google Gemini 4 Argon. Модель и провайдер
           выбираются отдельно."
@@ -1489,10 +1489,10 @@
           - id: workflow-instructions
             name: '__DSH_PROFILE_URI__/local-plugins/ptc-workflow/index.mjs?v=4'
             config: { variant: google }
-    - id: preset-ptc-workflow-qwen-4-0-max
+    - id: preset-qwen-4-0-max
       name: '@deepseek-ai/dsh-agent-preset'
       config:
-        id: ptc-workflow-qwen-4-0-max
+        id: qwen-4-0-max
         name: "Qwen 4.0 Max"
         description: "Адаптированный PTC для Qwen 4.0 Max. Модель и провайдер выбираются
           отдельно."
@@ -1525,10 +1525,10 @@
           - id: workflow-instructions
             name: '__DSH_PROFILE_URI__/local-plugins/ptc-workflow/index.mjs?v=4'
             config: { variant: qwen }
-    - id: preset-ptc-workflow-claude-haiku-5-5
+    - id: preset-haiku-5-5
       name: '@deepseek-ai/dsh-agent-preset'
       config:
-        id: ptc-workflow-claude-haiku-5-5
+        id: haiku-5-5
         name: "Claude Haiku 5.5"
         description: "Адаптированный PTC. Модель и провайдер выбираются отдельно."
         order: 2.800
@@ -1560,10 +1560,10 @@
           - id: workflow-instructions
             name: '__DSH_PROFILE_URI__/local-plugins/ptc-workflow/index.mjs?v=4'
             config: { variant: claude-haiku-5-5 }
-    - id: preset-ptc-workflow-claude-fable-5-1
+    - id: preset-fable-5-1
       name: '@deepseek-ai/dsh-agent-preset'
       config:
-        id: ptc-workflow-claude-fable-5-1
+        id: fable-5-1
         name: "Claude Fable 5.1"
         description: "Адаптированный PTC. Модель и провайдер выбираются отдельно."
         order: 2.804
@@ -1595,10 +1595,10 @@
           - id: workflow-instructions
             name: '__DSH_PROFILE_URI__/local-plugins/ptc-workflow/index.mjs?v=4'
             config: { variant: claude-fable-5-1 }
-    - id: preset-ptc-workflow-claude-opus-5
+    - id: preset-opus-5
       name: '@deepseek-ai/dsh-agent-preset'
       config:
-        id: ptc-workflow-claude-opus-5
+        id: opus-5
         name: "Claude Opus 5"
         description: "Адаптированный PTC. Модель и провайдер выбираются отдельно."
         order: 2.808
@@ -1630,10 +1630,10 @@
           - id: workflow-instructions
             name: '__DSH_PROFILE_URI__/local-plugins/ptc-workflow/index.mjs?v=4'
             config: { variant: claude-opus-5 }
-    - id: preset-ptc-workflow-claude-opus-4-8
+    - id: preset-opus-4-8
       name: '@deepseek-ai/dsh-agent-preset'
       config:
-        id: ptc-workflow-claude-opus-4-8
+        id: opus-4-8
         name: "Claude Opus 4.8"
         description: "Адаптированный PTC. Модель и провайдер выбираются отдельно."
         order: 2.812
@@ -1665,10 +1665,10 @@
           - id: workflow-instructions
             name: '__DSH_PROFILE_URI__/local-plugins/ptc-workflow/index.mjs?v=4'
             config: { variant: claude-opus-4-8 }
-    - id: preset-ptc-workflow-claude-sonnet-5
+    - id: preset-sonnet-5
       name: '@deepseek-ai/dsh-agent-preset'
       config:
-        id: ptc-workflow-claude-sonnet-5
+        id: sonnet-5
         name: "Claude Sonnet 5"
         description: "Адаптированный PTC. Модель и провайдер выбираются отдельно."
         order: 2.816
@@ -1700,10 +1700,10 @@
           - id: workflow-instructions
             name: '__DSH_PROFILE_URI__/local-plugins/ptc-workflow/index.mjs?v=4'
             config: { variant: claude-sonnet-5 }
-    - id: preset-ptc-workflow-grok-4-7
+    - id: preset-grok-4-7
       name: '@deepseek-ai/dsh-agent-preset'
       config:
-        id: ptc-workflow-grok-4-7
+        id: grok-4-7
         name: "Grok 4.7"
         description: "Адаптированный PTC. Модель и провайдер выбираются отдельно."
         order: 2.820
@@ -1735,10 +1735,10 @@
           - id: workflow-instructions
             name: '__DSH_PROFILE_URI__/local-plugins/ptc-workflow/index.mjs?v=4'
             config: { variant: grok-4-7 }
-    - id: preset-ptc-workflow-muse-spark-1-3
+    - id: preset-muse-spark-1-3
       name: '@deepseek-ai/dsh-agent-preset'
       config:
-        id: ptc-workflow-muse-spark-1-3
+        id: muse-spark-1-3
         name: "Muse Spark 1.3"
         description: "Адаптированный PTC. Модель и провайдер выбираются отдельно."
         order: 2.824
@@ -1770,10 +1770,10 @@
           - id: workflow-instructions
             name: '__DSH_PROFILE_URI__/local-plugins/ptc-workflow/index.mjs?v=4'
             config: { variant: muse-spark-1-3 }
-    - id: preset-ptc-workflow-minimax-m3
+    - id: preset-minimax-m3
       name: '@deepseek-ai/dsh-agent-preset'
       config:
-        id: ptc-workflow-minimax-m3
+        id: minimax-m3
         name: "MiniMax M3"
         description: "Адаптированный PTC. Модель и провайдер выбираются отдельно."
         order: 2.828
@@ -1805,10 +1805,10 @@
           - id: workflow-instructions
             name: '__DSH_PROFILE_URI__/local-plugins/ptc-workflow/index.mjs?v=4'
             config: { variant: minimax-m3 }
-    - id: preset-ptc-workflow-gemini-3-8-flash
+    - id: preset-gemini-3-8-flash
       name: '@deepseek-ai/dsh-agent-preset'
       config:
-        id: ptc-workflow-gemini-3-8-flash
+        id: gemini-3-8-flash
         name: "Gemini 3.8 Flash"
         description: "Адаптированный PTC. Модель и провайдер выбираются отдельно."
         order: 2.832
@@ -1840,10 +1840,10 @@
           - id: workflow-instructions
             name: '__DSH_PROFILE_URI__/local-plugins/ptc-workflow/index.mjs?v=4'
             config: { variant: gemini-3-8-flash }
-    - id: preset-ptc-workflow-kimi-k2-6
+    - id: preset-kimi-k2-6
       name: '@deepseek-ai/dsh-agent-preset'
       config:
-        id: ptc-workflow-kimi-k2-6
+        id: kimi-k2-6
         name: "Kimi K2.6"
         description: "Адаптированный PTC. Модель и провайдер выбираются отдельно."
         order: 2.836
@@ -1875,10 +1875,10 @@
           - id: workflow-instructions
             name: '__DSH_PROFILE_URI__/local-plugins/ptc-workflow/index.mjs?v=4'
             config: { variant: kimi-k2-6 }
-    - id: preset-ptc-workflow-qwen-3-8-max
+    - id: preset-qwen-3-8-max
       name: '@deepseek-ai/dsh-agent-preset'
       config:
-        id: ptc-workflow-qwen-3-8-max
+        id: qwen-3-8-max
         name: "Qwen 3.8 Max"
         description: "Адаптированный PTC. Модель и провайдер выбираются отдельно."
         order: 2.840
@@ -1910,10 +1910,10 @@
           - id: workflow-instructions
             name: '__DSH_PROFILE_URI__/local-plugins/ptc-workflow/index.mjs?v=4'
             config: { variant: qwen-3-8-max }
-    - id: preset-ptc-workflow-qwen-3-6-plus
+    - id: preset-qwen-3-6-plus
       name: '@deepseek-ai/dsh-agent-preset'
       config:
-        id: ptc-workflow-qwen-3-6-plus
+        id: qwen-3-6-plus
         name: "Qwen 3.6 Plus"
         description: "Адаптированный PTC. Модель и провайдер выбираются отдельно."
         order: 2.844
@@ -1945,10 +1945,10 @@
           - id: workflow-instructions
             name: '__DSH_PROFILE_URI__/local-plugins/ptc-workflow/index.mjs?v=4'
             config: { variant: qwen-3-6-plus }
-    - id: preset-ptc-workflow-gemini-4-neon
+    - id: preset-gemini-4-neon
       name: '@deepseek-ai/dsh-agent-preset'
       config:
-        id: ptc-workflow-gemini-4-neon
+        id: gemini-4-neon
         name: "Gemini 4 Neon"
         description: "Адаптированный PTC. Модель и провайдер выбираются отдельно."
         order: 2.848
@@ -1980,10 +1980,10 @@
           - id: workflow-instructions
             name: '__DSH_PROFILE_URI__/local-plugins/ptc-workflow/index.mjs?v=4'
             config: { variant: gemini-4-neon }
-    - id: preset-ptc-workflow-gemini-4-hydrogen
+    - id: preset-gemini-4-hydrogen
       name: '@deepseek-ai/dsh-agent-preset'
       config:
-        id: ptc-workflow-gemini-4-hydrogen
+        id: gemini-4-hydrogen
         name: "Gemini 4 Hydrogen"
         description: "Адаптированный PTC. Модель и провайдер выбираются отдельно."
         order: 2.852
@@ -2015,10 +2015,10 @@
           - id: workflow-instructions
             name: '__DSH_PROFILE_URI__/local-plugins/ptc-workflow/index.mjs?v=4'
             config: { variant: gemini-4-hydrogen }
-    - id: preset-ptc-workflow-gemini-4-carbon
+    - id: preset-gemini-4-carbon
       name: '@deepseek-ai/dsh-agent-preset'
       config:
-        id: ptc-workflow-gemini-4-carbon
+        id: gemini-4-carbon
         name: "Gemini 4 Carbon"
         description: "Адаптированный PTC. Модель и провайдер выбираются отдельно."
         order: 2.856
@@ -2050,10 +2050,10 @@
           - id: workflow-instructions
             name: '__DSH_PROFILE_URI__/local-plugins/ptc-workflow/index.mjs?v=4'
             config: { variant: gemini-4-carbon }
-    - id: preset-ptc-workflow-kimi-k3-1-pro
+    - id: preset-kimi-k3-1-pro
       name: '@deepseek-ai/dsh-agent-preset'
       config:
-        id: ptc-workflow-kimi-k3-1-pro
+        id: kimi-k3-1-pro
         name: "Kimi K3.1 Pro"
         description: "Адаптированный PTC. Модель и провайдер выбираются отдельно."
         order: 2.860
@@ -2085,10 +2085,10 @@
           - id: workflow-instructions
             name: '__DSH_PROFILE_URI__/local-plugins/ptc-workflow/index.mjs?v=4'
             config: { variant: kimi-k3-1-pro }
-    - id: preset-ptc-workflow-kimi-k2-7-code
+    - id: preset-kimi-k2-7-code
       name: '@deepseek-ai/dsh-agent-preset'
       config:
-        id: ptc-workflow-kimi-k2-7-code
+        id: kimi-k2-7-code
         name: "Kimi K2.7 Code"
         description: "Адаптированный PTC. Модель и провайдер выбираются отдельно."
         order: 2.864
@@ -2120,10 +2120,10 @@
           - id: workflow-instructions
             name: '__DSH_PROFILE_URI__/local-plugins/ptc-workflow/index.mjs?v=4'
             config: { variant: kimi-k2-7-code }
-    - id: preset-ptc-workflow-mistral-large-4
+    - id: preset-mistral-large-4
       name: '@deepseek-ai/dsh-agent-preset'
       config:
-        id: ptc-workflow-mistral-large-4
+        id: mistral-large-4
         name: "Mistral Large 4"
         description: "Адаптированный PTC. Модель и провайдер выбираются отдельно."
         order: 2.868
