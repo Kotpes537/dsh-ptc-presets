@@ -1,6 +1,7 @@
 """Tests for archive reconstruction and the upstream report."""
 
 import hashlib
+import json
 from pathlib import Path
 import re
 import subprocess
@@ -9,9 +10,29 @@ import unittest
 from unittest.mock import patch
 
 from scripts import presets
+from scripts.migrate_ids import migrate
 
 
 class PresetTests(unittest.TestCase):
+    def test_scheduled_target_migrates_without_changing_task_instructions(self):
+        with TemporaryDirectory() as temp:
+            root = Path(temp)
+            profile = root / 'profiles/desktop'
+            profile.mkdir(parents=True)
+            (profile / 'cordis.patch.yml').write_text('[]\n', encoding='utf-8')
+            store = root / 'storages/schedule.json'
+            store.parent.mkdir()
+            task = {'record': {'prompt': 'Keep the original instruction'},
+                    'target': {'kind': 'new', 'create': {'agentPreset': 'ptc-workflow-fable-full'}}}
+            store.write_bytes(presets.encode_json({'tables': {'tasks': {'HH': task}}}))
+            migrate(profile, True)
+            updated = json.loads(store.read_bytes())['tables']['tasks']['HH']
+            self.assertEqual(updated['target']['create']['agentPreset'], 'fable-5-2-full')
+            self.assertEqual(updated['record'], task['record'])
+            before = store.read_bytes()
+            migrate(profile, True)
+            self.assertEqual(store.read_bytes(), before)
+
     def test_legacy_ids_migrate_without_renaming_plugin_paths(self):
         text = ('    - id: preset-ptc-astra\n        id: ptc-astra\n'
                 'allowedAgentPresets: [ ptc-workflow-review, ptc-workflow-glm-5-3 ]\n'

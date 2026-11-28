@@ -2,6 +2,7 @@
 
 import argparse
 from datetime import datetime
+import json
 import os
 from pathlib import Path
 
@@ -36,12 +37,29 @@ def migrate(profile, apply=False):
             new = old if migrated == text else migrated.encode('utf-8')
         if old != new:
             pending.append((path, old, new))
+    schedule = profile.parent.parent / 'storages/schedule.json'
+    if profile.name == 'desktop' and profile.parent.name == 'profiles' and schedule.is_file():
+        if schedule.resolve() != schedule.absolute():
+            raise ValueError(f'Linked schedule path: {schedule}')
+        old = schedule.read_bytes()
+        document = json.loads(old.decode('utf-8-sig'))
+        aliases = presets.read_json(presets.PRESETS / 'legacy-ids.json')
+        changed = False
+        for task in document.get('tables', {}).get('tasks', {}).values():
+            create = task.get('target', {}).get('create', {})
+            preset = create.get('agentPreset')
+            if preset in aliases:
+                create['agentPreset'] = aliases[preset]
+                changed = True
+        if changed:
+            pending.append((schedule, old, presets.encode_json(document)))
     print(f'Files to migrate: {len(pending)}')
     if not apply or not pending:
         return
     backup = profile / ('preset-id-backup-' + datetime.now().strftime('%Y%m%d-%H%M%S-%f'))
     for path, old, _ in pending:
-        saved = backup / path.relative_to(profile)
+        relative = Path('storages/schedule.json') if path == schedule else path.relative_to(profile)
+        saved = backup / relative
         saved.parent.mkdir(parents=True, exist_ok=True)
         saved.write_bytes(old)
     applied = []
