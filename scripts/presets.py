@@ -53,7 +53,7 @@ def spec():
     by_id = {row["id"]: row["name"] for row in catalog}
     if any(not re.fullmatch(r"ptc-[a-z0-9-]+", row_id) for row_id in by_id):
         raise ValueError("Unexpected preset ID")
-    if len(by_id) != len(catalog) or len(set(by_id.values())) != len(catalog):
+    if len(by_id) != len(catalog) or len({name.casefold() for name in by_id.values()}) != len(catalog):
         raise ValueError("Duplicate preset identifier or title")
 
     template = (PRESETS / "ptc.patch.yml.in").read_text(encoding="utf-8")
@@ -302,15 +302,15 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     action = parser.add_subparsers(dest="action", required=True)
     action.add_parser("check", help="Check the preset catalog and the source lock")
+    action.add_parser("list", help="List preset names as shown in DSH")
     build_args = action.add_parser("build", help="Build the portable preset archive")
     build_args.add_argument("--output", type=Path, default=ROOT / "dist/DSH-PTC-portable.zip")
     build_args.add_argument("--source-repo", type=Path, help="Existing upstream clone")
     build_args.add_argument("--team", action="append", default=[],
                             choices=[*read_json(PRESETS / "teams.json"), "all"],
                             help="Allow subagent presets for one team (repeatable)")
-    build_args.add_argument("--preset", action="append", default=[],
-                            choices=[item["id"] for item in read_json(PRESETS / "catalog.json")],
-                            help="Include a preset and its dependencies (repeatable)")
+    build_args.add_argument("--preset", action="append", default=[], metavar="NAME",
+                            help="Include a preset by its DSH menu name (repeatable)")
     build_args.add_argument("--only", action="store_true",
                             help="Include only the selected teams and their dependencies")
     monitor_args = action.add_parser("upstream", help="Compare the archive with the reviewed revision")
@@ -321,9 +321,21 @@ def main():
     if opts.action == "build":
         if opts.only and not (opts.preset or opts.team):
             build_args.error("--only needs --preset or --team")
-        build(opts.output, opts.source_repo, opts.team, opts.preset, opts.only)
+        catalog = read_json(PRESETS / "catalog.json")
+        by_name = {row["name"].casefold(): row["id"] for row in catalog}
+        by_name.update({row["id"]: row["id"] for row in catalog})
+        selections = []
+        for name in opts.preset:
+            preset_id = by_name.get(name.strip().casefold())
+            if preset_id is None:
+                build_args.error(f"Unknown preset {name!r}. Run 'presets.py list' to see the available names.")
+            selections.append(preset_id)
+        build(opts.output, opts.source_repo, opts.team, selections, opts.only)
     elif opts.action == "upstream":
         monitor(opts.source_repo, opts.output, opts.head)
+    elif opts.action == "list":
+        _, catalog = spec()
+        print("\n".join(sorted((row["name"] for row in catalog), key=str.casefold)))
     else:
         lock, catalog = spec()
         print(f"{len(catalog)} presets; {len(lock['prompts'])} pinned prompt files")

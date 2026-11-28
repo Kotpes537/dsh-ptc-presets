@@ -6,11 +6,21 @@ import re
 import subprocess
 from tempfile import TemporaryDirectory
 import unittest
+from unittest.mock import patch
 
 from scripts import presets
 
 
 class PresetTests(unittest.TestCase):
+    def test_build_accepts_menu_names_and_existing_ids(self):
+        with patch("sys.argv", ["presets.py", "build", "--preset", "claude sonnet 5.5",
+                                "--preset", "Ревью", "--preset", "ptc-astra"]):
+            with patch.object(presets, "build") as build:
+                presets.main()
+        self.assertEqual(build.call_args.args[3], [
+            "ptc-workflow-claude-sonnet-5-5", "ptc-workflow-review", "ptc-astra",
+        ])
+
     def test_configuration_catalog_and_archive_references(self):
         lock, catalog = presets.spec()
         self.assertEqual(len(catalog), 54)
